@@ -17,7 +17,7 @@ Since MVC pattern was [formally introduced](https://scholar.google.com/scholar?q
 
 > _Models_ are those components of the system application that actually do the work (simulation of the application domain). They are kept quite distinct from _views_, which display aspects of the models. _Controllers_ are used to send messages to the model, and provide the interface between the model with its associated views and the interactive user interface devices (e.g., keyboard, mouse).
 
-![](../assets/945fcd3f8fd1de5f71fef258475c2c9ae27e16c8.jpg)
+![Overview of MVC pattern](../assets/945fcd3f8fd1de5f71fef258475c2c9ae27e16c8.jpg)
 
 As models simulate the app domain, the states of models can directly represent the states of the app, which indicates MVC pattern is doing state management.
 
@@ -27,7 +27,7 @@ So, I would select MVC pattern as the previously mentioned 'most commonly used w
 
 To make effective comparisons, the example module should be complicated enough. It should consist of at least 2 components with multiple related states handling user interactions to a certain degree. Though, to avoid getting lost in details, it should also not be too complicated. Then, a composite clock looks appropriate.
 
-![](../assets/b6fdff7965bad4178e4486cd7b99c2b604450e4a.gif)
+![Demonstration of the composite clock](../assets/b6fdff7965bad4178e4486cd7b99c2b604450e4a.gif)
 
 A composite clock is an interactive module that has 2 components, an analogue clock and a digital clock. The 2 child clocks always tick synchronously and can be set to new time by users. The analogue one can have its minute hand dragged. The digital one can have its text edited.
 
@@ -35,7 +35,7 @@ Although it's doable to use single big shared state for this example module, it'
 
 Then, there would be 3 related states seperately for the analogue clock, the digital clock and time itself. The state of time keeps a timestamp for the whole module. The states of the child clocks derive display data from the timestamp and accept user input data for setting the timestamp.
 
-![](../assets/ae484ce2d98d9bce4e87270373a8079572053b09.jpg)
+![Relation of the 3 states](../assets/ae484ce2d98d9bce4e87270373a8079572053b09.jpg)
 
 ## Example module built with MVC pattern
 
@@ -106,7 +106,7 @@ The example module, the composite clock, would be all placed in `src/CompositeCl
 
 And for controllers and views, `TimeModel` has none, `AnalogueModel` has `AnalogueView` and `AnalogueController`, `DigitalModel` as `DigitalView` and `DigitalController`. Then, all these parts are glued together by `CompositeView` and `CompositeController` to fulfill the functionality.
 
-![](../assets/09398f81029c602fe920fbf7782eda2bce711197.jpg)
+![Relation of parts in the composite clock](../assets/09398f81029c602fe920fbf7782eda2bce711197.jpg)
 
 The 3 models are coded as follows:
 
@@ -752,7 +752,7 @@ Then, the example module built with MVC pattern is complete. It can be previewed
 
 In terms of state management, the brightest pro of MVC pattern is, every state leads to a model directly, then a model leads to its view and controller as needed, which makes the app domain clearly split. It can be perceived by checking how `TimeModel`, `AnalogueModel`, `DigitalModel` and their views and controllers are constructured. This benifits maintainability.
 
-![](../assets/5a771f2b4e23ea0b5085dda9e1a40643c4fb8d99.jpg)
+![Benifit of MVC pattern](../assets/5a771f2b4e23ea0b5085dda9e1a40643c4fb8d99.jpg)
 
 But meanwhile, the biggest con of MVC pattern is, as models can invoke each other's state-changing methods and subscribe each other's state-changing events, the states changing becomes somehow unpredictable.
 
@@ -760,7 +760,7 @@ Taking `AnalogueModel` as an example, when `AnalogueModel#exitEditMode` gets inv
 
 As `AnalogueView` subscribes events `AnalogueModel.EVENTS.DISPLAY_ANGLES_CHANGED` and `AnalogueModel.EVENTS.IS_EDIT_MODE_CHANGED` at the same time, on `AnalogueModel#exitEditMode` invoked, it has to refresh itself 2 times, which harms efficiency. Besides, if there is any circular subscription to states-changing events and any state-changing method hits the circle, the whole app can easily go down, which harms reliability. To prevent that happening, the chain of state-changing events has to be carefully checked on developing models, which harms mantainability.
 
-![](../assets/04be6a9cdcb9a700539e1e0a58449f494f39eea7.jpg)
+![Harm of MVC pattern](../assets/04be6a9cdcb9a700539e1e0a58449f494f39eea7.jpg)
 
 In an app with a limited number of states, the chain of state-changing events can be easily tracked, so the pro's benift wins over the con's harm. But in an app with a bigger number of states, the chain of state-changing events can hardly be fully tracked, so the con's harm wins over the pro's benifit. As a sum-up, doing state management with MVC pattern can actually bring trouble in scaling up an app as the states changing becomes unpredictable.
 
