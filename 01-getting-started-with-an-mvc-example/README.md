@@ -750,19 +750,19 @@ Then, the example module built with MVC pattern is complete. It can be previewed
 
 ## Review of state management with MVC pattern
 
-In terms of state management, the brightest pro of MVC pattern is, every state leads to a model directly, then a model leads to its view and controller as needed, which makes the app domain clearly split. It can be perceived by checking how `TimeModel`, `AnalogueModel`, `DigitalModel` and their views and controllers are constructured. This benifits maintainability.
+In terms of state management, the brightest pro of MVC pattern is, every state leads to a model directly, then a model leads to its view and controller as needed, which makes the app domain clearly split. It can be perceived by checking how `TimeModel`, `AnalogueModel`, `DigitalModel` and their views and controllers are structured. This benefits maintainability.
 
-![Benifit of MVC pattern](../assets/5a771f2b4e23ea0b5085dda9e1a40643c4fb8d99.jpg)
+![Benefit of MVC pattern](../assets/5a771f2b4e23ea0b5085dda9e1a40643c4fb8d99.jpg)
 
 But meanwhile, the biggest con of MVC pattern is, as models can invoke each other's state-changing methods and subscribe each other's state-changing events, the states changing becomes somehow unpredictable.
 
 Taking `AnalogueModel` as an example, when `AnalogueModel#exitEditMode` gets invoked, `TimeModel#changeTimestamp` gets invoked. And, `TimeModel#changeTimestamp` emits event `TimeModel.EVENTS.TIMESTAMP_CHANGED`, so `AnalogueModel#syncDisplayAngles` gets invoked as one of the event's subscribers. Then, `AnalogueModel#syncDisplayAngles` emits event `AnalogueModel.EVENTS.DISPLAY_ANGLES_CHANGED`. Finally, `AnalogueModel#exitEditMode` emits event `AnalogueModel.EVENTS.IS_EDIT_MODE_CHANGED`.
 
-As `AnalogueView` subscribes events `AnalogueModel.EVENTS.DISPLAY_ANGLES_CHANGED` and `AnalogueModel.EVENTS.IS_EDIT_MODE_CHANGED` at the same time, on `AnalogueModel#exitEditMode` invoked, it has to refresh itself 2 times, which harms efficiency. Besides, if there is any circular subscription to states-changing events and any state-changing method hits the circle, the whole app can easily go down, which harms reliability. To prevent that happening, the chain of state-changing events has to be carefully checked on developing models, which harms mantainability.
+As `AnalogueView` subscribes events `AnalogueModel.EVENTS.DISPLAY_ANGLES_CHANGED` and `AnalogueModel.EVENTS.IS_EDIT_MODE_CHANGED` at the same time, on `AnalogueModel#exitEditMode` invoked, it has to refresh itself 2 times, which harms efficiency. Besides, if there is any circular subscription to states-changing events and any state-changing method hits the circle, the whole app can easily go down, which harms reliability. To prevent that happening, the chain of state-changing events has to be carefully checked on developing models, which harms maintainability.
 
 ![Harm of MVC pattern](../assets/04be6a9cdcb9a700539e1e0a58449f494f39eea7.jpg)
 
-In an app with a limited number of states, the chain of state-changing events can be easily tracked, so the pro's benift wins over the con's harm. But in an app with a bigger number of states, the chain of state-changing events can hardly be fully tracked, so the con's harm wins over the pro's benifit. As a sum-up, doing state management with MVC pattern can actually bring trouble in scaling up an app as the states changing becomes unpredictable.
+In an app with a limited number of states, the chain of state-changing events can be easily tracked, so the pro's benefit wins over the con's harm. But in an app with a bigger number of states, the chain of state-changing events can hardly be fully tracked, so the con's harm wins over the pro's benefit. As a sum-up, doing state management with MVC pattern can actually bring trouble in scaling up an app as the states changing becomes unpredictable.
 
 ## What's next
 
