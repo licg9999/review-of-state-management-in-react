@@ -15,10 +15,7 @@ export const ActionTypes = {
 export type DigitalAction =
   | { type: typeof ActionTypes['ENTER_EDIT_MODE'] }
   | { type: typeof ActionTypes['EXIT_EDIT_MODE'] }
-  | {
-      type: typeof ActionTypes['CHANGE_EDIT_MODE_TEXT'];
-      editModeText: string;
-    };
+  | { type: typeof ActionTypes['CHANGE_EDIT_MODE_TEXT']; editModeText: string };
 
 export function dispatchEnterEditMode(): void {
   if (digitalStore.getState().isEditMode) return;

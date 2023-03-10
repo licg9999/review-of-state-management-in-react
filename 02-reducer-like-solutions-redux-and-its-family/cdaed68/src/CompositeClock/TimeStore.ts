@@ -1,5 +1,5 @@
 import { ReduceStore } from 'flux/utils';
-import { ClockAction, clockDispatcher, initialClockState } from './ClockDispatcher';
+import { ClockAction, clockDispatcher, getInitialClockState } from './ClockDispatcher';
 import { ActionTypes } from './TimeActions';
 
 export interface TimeState {
@@ -13,7 +13,7 @@ class TimeStore extends ReduceStore<TimeState, ClockAction> {
 
   getInitialState(): TimeState {
     return (
-      initialClockState.time ?? {
+      getInitialClockState().time ?? {
         timestamp: 0,
       }
     );

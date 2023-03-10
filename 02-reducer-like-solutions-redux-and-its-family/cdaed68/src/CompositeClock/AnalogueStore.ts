@@ -1,6 +1,6 @@
 import { ReduceStore } from 'flux/utils';
 import { ActionTypes } from './AnalogueActions';
-import { ClockAction, clockDispatcher, initialClockState } from './ClockDispatcher';
+import { ClockAction, clockDispatcher, getInitialClockState } from './ClockDispatcher';
 import { ActionTypes as TimeActionTypes } from './TimeActions';
 import { timeStore } from './TimeStore';
 
@@ -26,7 +26,7 @@ class AnalogueStore extends ReduceStore<AnalogueState, ClockAction> {
   getInitialState(): AnalogueState {
     const displayAngles = this.calcDisplayAngles();
     return (
-      initialClockState.analogue ?? {
+      getInitialClockState().analogue ?? {
         displayAngles,
         isEditMode: false,
         editModeAngles: displayAngles,

@@ -12,15 +12,9 @@ export const ActionTypes = {
 } as const;
 
 export type AnalogueAction =
-  | {
-      type: typeof ActionTypes['ENTER_EDIT_MODE'];
-      editModeAngles: AnalogueAngles;
-    }
+  | { type: typeof ActionTypes['ENTER_EDIT_MODE']; editModeAngles: AnalogueAngles }
   | { type: typeof ActionTypes['EXIT_EDIT_MODE'] }
-  | {
-      type: typeof ActionTypes['CHANGE_EDIT_MODE_MINUTE_ANGLE'];
-      minuteAngle: number;
-    };
+  | { type: typeof ActionTypes['CHANGE_EDIT_MODE_MINUTE_ANGLE']; minuteAngle: number };
 
 export function dispatchEnterEditMode(
   getState: () => AnalogueState,

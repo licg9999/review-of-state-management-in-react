@@ -6,7 +6,7 @@ import './index.css';
 import { createAppStore } from './reduxStore';
 import reportWebVitals from './reportWebVitals';
 
-const store = createAppStore({
+const appStore = createAppStore({
   timeOfClock: {
     timestamp: Date.now(),
   },
@@ -15,7 +15,7 @@ const store = createAppStore({
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(
   <React.StrictMode>
-    <Provider store={store}>
+    <Provider store={appStore}>
       <App />
     </Provider>
   </React.StrictMode>

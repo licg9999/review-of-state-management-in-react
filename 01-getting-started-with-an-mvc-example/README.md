@@ -106,7 +106,7 @@ The example module, the composite clock, would be all placed in `src/CompositeCl
 
 And for controllers and views, `TimeModel` has none, `AnalogueModel` has `AnalogueView` and `AnalogueController`, `DigitalModel` as `DigitalView` and `DigitalController`. Then, all these parts are glued together by `CompositeView` and `CompositeController` to fulfill the functionality.
 
-![Relation of parts in the composite clock](../assets/09398f81029c602fe920fbf7782eda2bce711197.jpg)
+![Relation of parts in the composite clock built with MVC pattern](../assets/09398f81029c602fe920fbf7782eda2bce711197.jpg)
 
 The 3 models are coded as follows:
 
@@ -758,7 +758,7 @@ But meanwhile, the biggest con of MVC pattern is, as models can invoke each othe
 
 Taking `AnalogueModel` as an example, when `AnalogueModel#exitEditMode` gets invoked, `TimeModel#changeTimestamp` gets invoked. And, `TimeModel#changeTimestamp` emits event `TimeModel.EVENTS.TIMESTAMP_CHANGED`, so `AnalogueModel#syncDisplayAngles` gets invoked as one of the event's subscribers. Then, `AnalogueModel#syncDisplayAngles` emits event `AnalogueModel.EVENTS.DISPLAY_ANGLES_CHANGED`. Finally, `AnalogueModel#exitEditMode` emits event `AnalogueModel.EVENTS.IS_EDIT_MODE_CHANGED`.
 
-As `AnalogueView` subscribes events `AnalogueModel.EVENTS.DISPLAY_ANGLES_CHANGED` and `AnalogueModel.EVENTS.IS_EDIT_MODE_CHANGED` at the same time, on `AnalogueModel#exitEditMode` invoked, it has to refresh itself 2 times, which harms efficiency. Besides, if there is any circular subscription to states-changing events and any state-changing method hits the circle, the whole app can easily go down, which harms reliability. To prevent that happening, the chain of state-changing events has to be carefully checked on developing models, which harms maintainability.
+As `AnalogueView` subscribes events `AnalogueModel.EVENTS.DISPLAY_ANGLES_CHANGED` and `AnalogueModel.EVENTS.IS_EDIT_MODE_CHANGED` at the same time, on `AnalogueModel#exitEditMode` invoked, it has to refresh itself 2 times, which harms efficiency. Besides, if there is any circular subscription to state-changing events and any state-changing method hits the circle, the whole app can easily go down, which harms reliability. To prevent that happening, the chain of state-changing events has to be carefully checked on developing models, which harms maintainability.
 
 ![Harm of MVC pattern](../assets/04be6a9cdcb9a700539e1e0a58449f494f39eea7.jpg)
 
@@ -766,4 +766,4 @@ In an app with a limited number of states, the chain of state-changing events ca
 
 ## What's next
 
-By far, the baseline example module has been built with MVC pattern. Meanwhile, MVC pattern is reviewed based on it. Then, in the next article, continuing to answer the question #1, I would look into reducer-like solutions of state management in React - Reducer and its family.
+By far, the baseline example module has been built with MVC pattern. Meanwhile, MVC pattern is reviewed based on it. Then, in the next article, continuing to answer the question #1, I would look into reducer-like solutions of state management in React - Redux and its family.

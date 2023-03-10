@@ -1,6 +1,6 @@
 import { format, isMatch } from 'date-fns';
 import { ReduceStore } from 'flux/utils';
-import { ClockAction, clockDispatcher, initialClockState } from './ClockDispatcher';
+import { ClockAction, clockDispatcher, getInitialClockState } from './ClockDispatcher';
 import { ActionTypes } from './DigitalActions';
 import { ActionTypes as TimeActionTypes } from './TimeActions';
 import { timeStore } from './TimeStore';
@@ -21,7 +21,7 @@ export class DigitalStore extends ReduceStore<DigitalState, ClockAction> {
   getInitialState(): DigitalState {
     const displayText = this.calcDisplayText();
     return (
-      initialClockState.digital ?? {
+      getInitialClockState().digital ?? {
         displayText,
         isEditMode: false,
         editModeText: displayText,

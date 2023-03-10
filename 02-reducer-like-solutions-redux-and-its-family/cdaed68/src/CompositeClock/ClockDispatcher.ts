@@ -14,10 +14,12 @@ export interface ClockState {
   digital: DigitalState;
 }
 
-export const initialClockState: Partial<ClockState> = {
-  time: {
-    timestamp: Date.now(),
-  },
-};
+export function getInitialClockState(): Partial<ClockState> {
+  return {
+    time: {
+      timestamp: Date.now(),
+    },
+  };
+}
 
 export const clockDispatcher = new Dispatcher<ClockAction>();
