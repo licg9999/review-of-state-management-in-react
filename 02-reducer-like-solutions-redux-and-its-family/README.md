@@ -1013,7 +1013,7 @@ To sum up, doing state management with Redux achieves predictable states changin
 
 ## Example module built with Redux Toolkit
 
-Now that using Redux is costly, let me check out its next-generation solution, Redux Toolkit(RTK), whose goal is to decrease the cost. As the view components in every example module built with reducer-like solutions would all be similarly coded and relate little to state managemenet, I would not list them in the following sections but they can still be found in the hosted codebase.
+Now that using Redux is costly, let me check out its next-generation solution, Redux Toolkit(RTK), whose goal is to decrease the cost. As the view components in every example module built with a reducer-like solution would all be similarly coded and relate little to state managemenet, I would not list them in the following sections but they can still be found in the hosted codebase.
 
 Again, `create-react-app` is used to initialize the React app with the option `--template typescript`:
 
@@ -2123,7 +2123,7 @@ export function contextualizeUseReducer<TState, TAction>(
 }
 ```
 
-Additionally, when a function wrapped with `useCallback` in a view component needs to access a state, it can use the state getter instead of the state directly to avoid getting itself regenerated on rerendered so to avoid performance issue to some degree. Though, a small problem of the state getter is, it can't access the latest value state immediately after an action is dispatched because the state accessed by the getter only gets refreshed on rerendered.
+Additionally, when some `useCallback` wrapped function in a view component needs to access a state, it can use the state getter instead of the state directly to avoid getting itself regenerated on rerendered so to avoid performance issues to some degree. Though, a small problem of the state getter is, it can't access the latest value state immediately after an action is dispatched because the state accessed by the getter only gets refreshed on rerendered.
 
 The general idea of the implementation with `useReducer` is almost the same as that with Redux except that there is no app-specific setup like the Redux setup.
 
@@ -2506,7 +2506,7 @@ export const CompositeClock: FC = () => {
 
 ## Review of state management with `useReducer`
 
-Compared with Redux, in `useReducer`, getting one state managed is almost the same except that there is no app-specific setup like the Redux setup but I need to build my own helper to get component-specific states managed as module-specific ones. Reducers and their actions are high-coupling and sometimes constitue circular dependency, which results in high cost of development. The modularity issue that a module can't have multiple instances with independent states is gone but building and using the helper increases the cost.
+Compared with Redux, in `useReducer`, getting one state managed is almost the same except that there is no app-specific setup like the Redux setup but I need to build my own helper to get component-specific states managed as module-specific ones. Reducers and their actions are high-coupling and sometimes constitue circular dependency, which results in high cost of development. The modularity issue that a module can't have multiple instances with independent states is gone but building and using the helper of my own increases the cost.
 
 To sum up, doing state management with `useReducer` receives the same benefits and the harms as with Redux.
 
@@ -2514,10 +2514,8 @@ To sum up, doing state management with `useReducer` receives the same benefits a
 
 After getting the example module, the composite clock, rebuilt with the 4 Redux family members, Redux, RTK, Flux and `useReducer`, it can be concluded that Redux family achieves predictable states changing despite the scale of the app but with high cost of development. Because of reducers processing old states and actions for new states with no side effect, states changing becomes predictable. Because of high coupling between reducers/stores and their actions and the modularity issue that a module can't have multiple instances with independent states by default, cost of development is high.
 
-Though, an interesting insight is, the 2 cons of Redux family are not basic characters of reducer-like solutions if the concept of reduce function is used differently or the default scopes of states are treated differently.
-
-It's undeniable that Redux family goes much further compared with MVC pattern, but it's also completely possible that a better reducer-like solution can be designed.
+Though, an interesting insight is, the 2 cons of Redux family are not basic characters of reducer-like solutions because the concept of reduce function can be used differently or the default scopes of states can be organized differently. It's still undeniable that Redux family goes much further compared with MVC pattern, but it's also completely possible that a better reducer-like solution can be designed.
 
 ## What's next
 
-By far, important members of Redux family have been reviewed compared with MVC pattern, which reviews reducer-like solutions, too. Then, in the next article, continuing to answer the question #1 in the last article, I would look into facebook's experiment of state management in React - Recoil.
+By far, important members of Redux family have been reviewed compared with MVC pattern, which reviews reducer-like solutions as a result. Then, in the next article, continuing to answer the question #1 in the last article, I would look into facebook's experiment of state management in React - Recoil.
