@@ -49,7 +49,7 @@ export class DigitalStore extends ReduceStore<DigitalState, ClockAction> {
     return format(timeStore.getState().timestamp, DigitalStore.FORMAT);
   }
 
-  isEditModelTextValid(): boolean {
+  isEditModeTextValid(): boolean {
     return isMatch(this.getState().editModeText, DigitalStore.FORMAT);
   }
 }

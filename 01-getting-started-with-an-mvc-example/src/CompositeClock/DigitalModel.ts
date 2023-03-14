@@ -60,7 +60,7 @@ export class DigitalModel extends EventEmitter {
   exitEditMode(submit: boolean = true): void {
     if (!this.isEditMode) return;
     this.isEditMode = false;
-    if (submit && this.isEditModelTextValid()) {
+    if (submit && this.isEditModeTextValid()) {
       this.timeModel.changeTimestamp(
         parse(this.editModeText, DigitalModel.FORMAT, this.timeModel.getState().timestamp).getTime()
       );
@@ -73,7 +73,7 @@ export class DigitalModel extends EventEmitter {
     this.emit(DigitalModel.EVENTS.EDIT_MODE_TEXT_CHANGED);
   }
 
-  isEditModelTextValid(): boolean {
+  isEditModeTextValid(): boolean {
     return isMatch(this.editModeText, DigitalModel.FORMAT);
   }
 }

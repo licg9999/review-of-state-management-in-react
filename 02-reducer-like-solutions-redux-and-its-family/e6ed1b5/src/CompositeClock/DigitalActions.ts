@@ -3,8 +3,8 @@ import { Dispatch } from 'react';
 import {
   DigitalState,
   DIGITAL_TEXT_FORMAT,
-  getDigitalDisplayText,
-  isEditModelTextValid,
+  getDisplayText,
+  isEditModeTextValid,
 } from './DigitalReducer';
 import { changeTimestamp, TimeAction } from './TimeActions';
 import type { TimeState } from './TimeReducer';
@@ -26,7 +26,7 @@ export function dispatchEnterEditMode(
   getTimeState: () => TimeState
 ): void {
   if (getState().isEditMode) return;
-  const editModeText = getDigitalDisplayText(getTimeState());
+  const editModeText = getDisplayText(getTimeState());
   dispatch({
     type: ActionTypes.ENTER_EDIT_MODE,
     editModeText,
@@ -41,7 +41,7 @@ export function dispatchExitEditMode(
   submit: boolean = true
 ): void {
   if (!getState().isEditMode) return;
-  if (submit && isEditModelTextValid(getState())) {
+  if (submit && isEditModeTextValid(getState())) {
     dispatchTime(
       changeTimestamp(
         parse(getState().editModeText, DIGITAL_TEXT_FORMAT, getTimeState().timestamp).getTime()

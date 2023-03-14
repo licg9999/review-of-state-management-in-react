@@ -1,7 +1,7 @@
 import { FC, useCallback, useEffect, useRef } from 'react';
 import { useAppDispatch, useAppSelector, useAppStore } from '../reduxHooks';
 import { changeEditModeText, dispatchEnterEditMode, dispatchExitEditMode } from './DigitalActions';
-import { DIGITAL_TEXT_FORMAT, getDigitalDisplayText, isEditModelTextValid } from './DigitalReducer';
+import { DIGITAL_TEXT_FORMAT, getDisplayText, isEditModeTextValid } from './DigitalReducer';
 import styles from './DigitalView.module.css';
 
 interface Props {
@@ -13,7 +13,7 @@ export const DigitalView: FC<Props> = ({ className }) => {
   const dispatch = useAppDispatch();
   const state = useAppSelector((appState) => appState.digitalClock);
   const { isEditMode, editModeText } = state;
-  const displayText = useAppSelector((appState) => getDigitalDisplayText(appState.timeOfClock));
+  const displayText = useAppSelector((appState) => getDisplayText(appState.timeOfClock));
 
   const refEditor = useRef<HTMLInputElement | null>(null);
 
@@ -54,7 +54,7 @@ export const DigitalView: FC<Props> = ({ className }) => {
             onChange={onEditorChange}
             onKeyDown={onEditorKeyDown}
           />
-          {!isEditModelTextValid(state) && (
+          {!isEditModeTextValid(state) && (
             <div className={styles.invalidHint}>
               The input time doesn't match the expected format which is '{DIGITAL_TEXT_FORMAT}'.
             </div>

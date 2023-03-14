@@ -499,11 +499,11 @@ export function digitalReducer(
   return state;
 }
 
-export function isEditModelTextValid(state: DigitalState): boolean {
+export function isEditModeTextValid(state: DigitalState): boolean {
   return isMatch(state.editModeText, DIGITAL_TEXT_FORMAT);
 }
 
-export function getDigitalDisplayText(timeState: TimeState): string {
+export function getDisplayText(timeState: TimeState): string {
   return format(timeState.timestamp, DIGITAL_TEXT_FORMAT);
 }
 ```
@@ -563,7 +563,7 @@ export function createAppStore(initialState: Partial<AppState> = {}): AppStore {
 // 77ed362/src/CompositeClock/DigitalActions.ts
 +import { parse } from 'date-fns';
 +import type { AppStore } from '../reduxStore';
-+import { DIGITAL_TEXT_FORMAT, getDigitalDisplayText, isEditModelTextValid } from './DigitalReducer';
++import { DIGITAL_TEXT_FORMAT, getDisplayText, isEditModeTextValid } from './DigitalReducer';
 +import { changeTimestamp } from './TimeActions';
 +
 const NS = 'COMPOSITE_CLOCK-DIGITAL';
@@ -584,7 +584,7 @@ export type DigitalAction =
 +export function dispatchEnterEditMode(store: AppStore): void {
 +  const { timeOfClock, digitalClock } = store.getState();
 +  if (digitalClock.isEditMode) return;
-+  const editModeText = getDigitalDisplayText(timeOfClock);
++  const editModeText = getDisplayText(timeOfClock);
 +  store.dispatch({
 +    type: ActionTypes.ENTER_EDIT_MODE,
 +    editModeText,
@@ -594,7 +594,7 @@ export type DigitalAction =
 +export function dispatchExitEditMode(store: AppStore, submit: boolean = true): void {
 +  const { timeOfClock, digitalClock } = store.getState();
 +  if (!digitalClock.isEditMode) return;
-+  if (submit && isEditModelTextValid(digitalClock)) {
++  if (submit && isEditModeTextValid(digitalClock)) {
 +    store.dispatch(
 +      changeTimestamp(
 +        parse(digitalClock.editModeText, DIGITAL_TEXT_FORMAT, timeOfClock.timestamp).getTime()
@@ -824,7 +824,7 @@ export const AnalogueView: FC<Props> = ({ className }) => {
 import { FC, useCallback, useEffect, useRef } from 'react';
 import { useAppDispatch, useAppSelector, useAppStore } from '../reduxHooks';
 import { changeEditModeText, dispatchEnterEditMode, dispatchExitEditMode } from './DigitalActions';
-import { DIGITAL_TEXT_FORMAT, getDigitalDisplayText, isEditModelTextValid } from './DigitalReducer';
+import { DIGITAL_TEXT_FORMAT, getDisplayText, isEditModeTextValid } from './DigitalReducer';
 import styles from './DigitalView.module.css';
 
 interface Props {
@@ -836,7 +836,7 @@ export const DigitalView: FC<Props> = ({ className }) => {
   const dispatch = useAppDispatch();
   const state = useAppSelector((appState) => appState.digitalClock);
   const { isEditMode, editModeText } = state;
-  const displayText = useAppSelector((appState) => getDigitalDisplayText(appState.timeOfClock));
+  const displayText = useAppSelector((appState) => getDisplayText(appState.timeOfClock));
 
   const refEditor = useRef<HTMLInputElement | null>(null);
 
@@ -877,7 +877,7 @@ export const DigitalView: FC<Props> = ({ className }) => {
             onChange={onEditorChange}
             onKeyDown={onEditorKeyDown}
           />
-          {!isEditModelTextValid(state) && (
+          {!isEditModeTextValid(state) && (
             <div className={styles.invalidHint}>
               The input time doesn't match the expected format which is '{DIGITAL_TEXT_FORMAT}'.
             </div>
@@ -1328,7 +1328,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 +  return (dispatch, getState) => {
 +    const { timeOfClock, digitalClock } = getState();
 +    if (digitalClock.isEditMode) return;
-+    const editModeText = getDigitalDisplayText(timeOfClock);
++    const editModeText = getDisplayText(timeOfClock);
 +    dispatch(_enterEditMode(editModeText));
 +  };
 +}
@@ -1337,7 +1337,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 +  return (dispatch, getState) => {
 +    const { timeOfClock, digitalClock } = getState();
 +    if (!digitalClock.isEditMode) return;
-+    if (submit && isEditModelTextValid(digitalClock)) {
++    if (submit && isEditModeTextValid(digitalClock)) {
 +      dispatch(
 +        changeTimestamp(
 +          parse(digitalClock.editModeText, DIGITAL_TEXT_FORMAT, timeOfClock.timestamp).getTime()
@@ -1348,11 +1348,11 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 +  };
 +}
 +
-+export function isEditModelTextValid(state: DigitalState): boolean {
++export function isEditModeTextValid(state: DigitalState): boolean {
 +  return isMatch(state.editModeText, DIGITAL_TEXT_FORMAT);
 +}
 +
-+export function getDigitalDisplayText(timeState: TimeState): string {
++export function getDisplayText(timeState: TimeState): string {
 +  return format(timeState.timestamp, DIGITAL_TEXT_FORMAT);
 +}
 ```
@@ -1766,7 +1766,7 @@ export class DigitalStore extends ReduceStore<DigitalState, ClockAction> {
     return format(timeStore.getState().timestamp, DigitalStore.FORMAT);
   }
 
-  isEditModelTextValid(): boolean {
+  isEditModeTextValid(): boolean {
     return isMatch(this.getState().editModeText, DigitalStore.FORMAT);
   }
 }
@@ -1804,7 +1804,7 @@ export type DigitalAction =
 +export function dispatchExitEditMode(submit: boolean = true): void {
 +  const digitalState = digitalStore.getState();
 +  if (!digitalState.isEditMode) return;
-+  if (submit && digitalStore.isEditModelTextValid()) {
++  if (submit && digitalStore.isEditModeTextValid()) {
 +    clockDispatcher.dispatch(
 +      changeTimestamp(
 +        parse(
@@ -2387,11 +2387,11 @@ export const {
   useTheStateGetter: useDigitalStateGetter,
 } = contextualizeUseReducer(useRawReducer);
 
-export function isEditModelTextValid(state: DigitalState): boolean {
+export function isEditModeTextValid(state: DigitalState): boolean {
   return isMatch(state.editModeText, DIGITAL_TEXT_FORMAT);
 }
 
-export function getDigitalDisplayText(timeState: TimeState): string {
+export function getDisplayText(timeState: TimeState): string {
   return format(timeState.timestamp, DIGITAL_TEXT_FORMAT);
 }
 ```
@@ -2403,8 +2403,8 @@ export function getDigitalDisplayText(timeState: TimeState): string {
 +import {
 +  DigitalState,
 +  DIGITAL_TEXT_FORMAT,
-+  getDigitalDisplayText,
-+  isEditModelTextValid,
++  getDisplayText,
++  isEditModeTextValid,
 +} from './DigitalReducer';
 +import { changeTimestamp, TimeAction } from './TimeActions';
 +import type { TimeState } from './TimeReducer';
@@ -2428,7 +2428,7 @@ export type DigitalAction =
 +  getTimeState: () => TimeState
 +): void {
 +  if (getState().isEditMode) return;
-+  const editModeText = getDigitalDisplayText(getTimeState());
++  const editModeText = getDisplayText(getTimeState());
 +  dispatch({
 +    type: ActionTypes.ENTER_EDIT_MODE,
 +    editModeText,
@@ -2443,7 +2443,7 @@ export type DigitalAction =
 +  submit: boolean = true
 +): void {
 +  if (!getState().isEditMode) return;
-+  if (submit && isEditModelTextValid(getState())) {
++  if (submit && isEditModeTextValid(getState())) {
 +    dispatchTime(
 +      changeTimestamp(
 +        parse(getState().editModeText, DIGITAL_TEXT_FORMAT, getTimeState().timestamp).getTime()

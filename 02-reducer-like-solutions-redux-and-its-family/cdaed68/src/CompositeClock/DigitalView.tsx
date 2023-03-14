@@ -46,7 +46,7 @@ export const DigitalView: FC<Props> = ({ className, displayText, isEditMode, edi
             onChange={onEditorChange}
             onKeyDown={onEditorKeyDown}
           />
-          {!digitalStore.isEditModelTextValid() && (
+          {!digitalStore.isEditModeTextValid() && (
             <div className={styles.invalidHint}>
               The input time doesn't match the expected format which is '{DigitalStore.FORMAT}'.
             </div>

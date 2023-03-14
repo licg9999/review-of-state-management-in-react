@@ -1,6 +1,6 @@
 import { parse } from 'date-fns';
 import type { AppStore } from '../reduxStore';
-import { DIGITAL_TEXT_FORMAT, getDigitalDisplayText, isEditModelTextValid } from './DigitalReducer';
+import { DIGITAL_TEXT_FORMAT, getDisplayText, isEditModeTextValid } from './DigitalReducer';
 import { changeTimestamp } from './TimeActions';
 
 const NS = 'COMPOSITE_CLOCK-DIGITAL';
@@ -19,7 +19,7 @@ export type DigitalAction =
 export function dispatchEnterEditMode(store: AppStore): void {
   const { timeOfClock, digitalClock } = store.getState();
   if (digitalClock.isEditMode) return;
-  const editModeText = getDigitalDisplayText(timeOfClock);
+  const editModeText = getDisplayText(timeOfClock);
   store.dispatch({
     type: ActionTypes.ENTER_EDIT_MODE,
     editModeText,
@@ -29,7 +29,7 @@ export function dispatchEnterEditMode(store: AppStore): void {
 export function dispatchExitEditMode(store: AppStore, submit: boolean = true): void {
   const { timeOfClock, digitalClock } = store.getState();
   if (!digitalClock.isEditMode) return;
-  if (submit && isEditModelTextValid(digitalClock)) {
+  if (submit && isEditModeTextValid(digitalClock)) {
     store.dispatch(
       changeTimestamp(
         parse(digitalClock.editModeText, DIGITAL_TEXT_FORMAT, timeOfClock.timestamp).getTime()

@@ -44,7 +44,7 @@ export function enterEditMode(): AppThunk {
   return (dispatch, getState) => {
     const { timeOfClock, digitalClock } = getState();
     if (digitalClock.isEditMode) return;
-    const editModeText = getDigitalDisplayText(timeOfClock);
+    const editModeText = getDisplayText(timeOfClock);
     dispatch(_enterEditMode(editModeText));
   };
 }
@@ -53,7 +53,7 @@ export function exitEditMode(submit: boolean = true): AppThunk {
   return (dispatch, getState) => {
     const { timeOfClock, digitalClock } = getState();
     if (!digitalClock.isEditMode) return;
-    if (submit && isEditModelTextValid(digitalClock)) {
+    if (submit && isEditModeTextValid(digitalClock)) {
       dispatch(
         changeTimestamp(
           parse(digitalClock.editModeText, DIGITAL_TEXT_FORMAT, timeOfClock.timestamp).getTime()
@@ -64,10 +64,10 @@ export function exitEditMode(submit: boolean = true): AppThunk {
   };
 }
 
-export function isEditModelTextValid(state: DigitalState): boolean {
+export function isEditModeTextValid(state: DigitalState): boolean {
   return isMatch(state.editModeText, DIGITAL_TEXT_FORMAT);
 }
 
-export function getDigitalDisplayText(timeState: TimeState): string {
+export function getDisplayText(timeState: TimeState): string {
   return format(timeState.timestamp, DIGITAL_TEXT_FORMAT);
 }

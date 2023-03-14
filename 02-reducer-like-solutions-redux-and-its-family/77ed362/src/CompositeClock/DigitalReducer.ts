@@ -27,10 +27,10 @@ export function digitalReducer(
   return state;
 }
 
-export function isEditModelTextValid(state: DigitalState): boolean {
+export function isEditModeTextValid(state: DigitalState): boolean {
   return isMatch(state.editModeText, DIGITAL_TEXT_FORMAT);
 }
 
-export function getDigitalDisplayText(timeState: TimeState): string {
+export function getDisplayText(timeState: TimeState): string {
   return format(timeState.timestamp, DIGITAL_TEXT_FORMAT);
 }

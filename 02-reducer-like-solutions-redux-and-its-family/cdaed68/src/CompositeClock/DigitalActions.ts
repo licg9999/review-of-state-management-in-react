@@ -25,7 +25,7 @@ export function dispatchEnterEditMode(): void {
 export function dispatchExitEditMode(submit: boolean = true): void {
   const digitalState = digitalStore.getState();
   if (!digitalState.isEditMode) return;
-  if (submit && digitalStore.isEditModelTextValid()) {
+  if (submit && digitalStore.isEditModeTextValid()) {
     clockDispatcher.dispatch(
       changeTimestamp(
         parse(

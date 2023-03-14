@@ -5,8 +5,8 @@ import {
   DIGITAL_TEXT_FORMAT,
   enterEditMode,
   exitEditMode,
-  getDigitalDisplayText,
-  isEditModelTextValid,
+  getDisplayText,
+  isEditModeTextValid,
 } from './DigitalSlice';
 import styles from './DigitalView.module.css';
 
@@ -18,7 +18,7 @@ export const DigitalView: FC<Props> = ({ className }) => {
   const dispatch = useAppDispatch();
   const state = useAppSelector((appState) => appState.digitalClock);
   const { isEditMode, editModeText } = state;
-  const displayText = useAppSelector((appState) => getDigitalDisplayText(appState.timeOfClock));
+  const displayText = useAppSelector((appState) => getDisplayText(appState.timeOfClock));
 
   const refEditor = useRef<HTMLInputElement | null>(null);
 
@@ -59,7 +59,7 @@ export const DigitalView: FC<Props> = ({ className }) => {
             onChange={onEditorChange}
             onKeyDown={onEditorKeyDown}
           />
-          {!isEditModelTextValid(state) && (
+          {!isEditModeTextValid(state) && (
             <div className={styles.invalidHint}>
               The input time doesn't match the expected format which is '{DIGITAL_TEXT_FORMAT}'.
             </div>

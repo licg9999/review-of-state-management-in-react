@@ -2,8 +2,8 @@ import { FC, useCallback, useEffect, useMemo, useRef } from 'react';
 import { changeEditModeText, dispatchEnterEditMode, dispatchExitEditMode } from './DigitalActions';
 import {
   DIGITAL_TEXT_FORMAT,
-  getDigitalDisplayText,
-  isEditModelTextValid,
+  getDisplayText,
+  isEditModeTextValid,
   useDigitalReducer,
   useDigitalStateGetter,
 } from './DigitalReducer';
@@ -21,7 +21,7 @@ export const DigitalView: FC<Props> = ({ className }) => {
   const getTimeState = useTimeStateGetter();
 
   const { isEditMode, editModeText } = state;
-  const displayText = useMemo(() => getDigitalDisplayText(timeState), [timeState]);
+  const displayText = useMemo(() => getDisplayText(timeState), [timeState]);
 
   const refEditor = useRef<HTMLInputElement | null>(null);
 
@@ -68,7 +68,7 @@ export const DigitalView: FC<Props> = ({ className }) => {
             onChange={onEditorChange}
             onKeyDown={onEditorKeyDown}
           />
-          {!isEditModelTextValid(state) && (
+          {!isEditModeTextValid(state) && (
             <div className={styles.invalidHint}>
               The input time doesn't match the expected format which is '{DIGITAL_TEXT_FORMAT}'.
             </div>
