@@ -754,9 +754,9 @@ In terms of state management, the brightest pro of MVC pattern is, every state l
 
 ![Benefit of MVC pattern](../assets/5a771f2b4e23ea0b5085dda9e1a40643c4fb8d99.jpg)
 
-But meanwhile, the biggest con of MVC pattern is, as models can invoke each other's state-changing methods and subscribe each other's state-changing events, the states changing becomes somehow unpredictable.
+But meanwhile, the biggest con of MVC pattern is, as state-changing methods in a model can get invoked to emit state-changing events and state-changing events can be subscribed by other models to get more state-changing methods invoked, states changing becomes unpredictable.
 
-Taking `AnalogueModel` as an example, when `AnalogueModel#exitEditMode` gets invoked, `TimeModel#changeTimestamp` gets invoked. And, `TimeModel#changeTimestamp` emits event `TimeModel.EVENTS.TIMESTAMP_CHANGED`, so `AnalogueModel#syncDisplayAngles` gets invoked as one of the event's subscribers. Then, `AnalogueModel#syncDisplayAngles` emits event `AnalogueModel.EVENTS.DISPLAY_ANGLES_CHANGED`. Finally, `AnalogueModel#exitEditMode` emits event `AnalogueModel.EVENTS.IS_EDIT_MODE_CHANGED`.
+Taking `AnalogueModel` as an example, when `AnalogueModel#exitEditMode` gets invoked, `TimeModel#changeTimestamp` gets invoked. And, `TimeModel#changeTimestamp` emits event `TimeModel.EVENTS.TIMESTAMP_CHANGED`, so `AnalogueModel#syncDisplayAngles` gets invoked as one of the event's subscribers. Then, `AnalogueModel#syncDisplayAngles` emits event `AnalogueModel.EVENTS.DISPLAY_ANGLES_CHANGED`. Afterwards, `AnalogueModel#exitEditMode` emits event `AnalogueModel.EVENTS.IS_EDIT_MODE_CHANGED`.
 
 As `AnalogueView` subscribes events `AnalogueModel.EVENTS.DISPLAY_ANGLES_CHANGED` and `AnalogueModel.EVENTS.IS_EDIT_MODE_CHANGED` at the same time, on `AnalogueModel#exitEditMode` invoked, it has to refresh itself 2 times, which harms efficiency. Besides, if there is any circular subscription to state-changing events and any state-changing method hits the circle, the whole app can easily go down, which harms reliability. To prevent that happening, the chain of state-changing events has to be carefully checked on developing models, which harms maintainability.
 
@@ -766,4 +766,4 @@ In an app with a limited number of states, the chain of state-changing events ca
 
 ## What's next
 
-By far, the baseline example module has been built with MVC pattern. Meanwhile, MVC pattern is reviewed based on it. Then, in the next article, continuing to answer the question #1, I would look into reducer-like solutions of state management in React - Redux and its family.
+By far, the baseline example module has been built with MVC pattern. Meanwhile, MVC pattern is reviewed based on it. Then, in the next article, continuing to answer the question #1, I would look into [reducer-like solutions of state management in React - Redux and its family](../02-reducer-like-solutions-redux-and-its-family/README.md).
