@@ -2518,4 +2518,4 @@ Though, an interesting insight is, the 2 cons of Redux family are not intrinsic 
 
 ## What's next
 
-By far, important members of Redux family have been reviewed compared with MVC pattern, which reviews reducer-like solutions as a result. Then, in the next article, continuing to answer the question #1 in the last article, I would look into facebook's experiment of state management in React - Recoil.
+By far, important members of Redux family have been reviewed compared with MVC pattern, which reviews reducer-like solutions as a result. Then, in the next article, continuing to answer the question #1 in the last article, I would look into [facebook's experiment of state management in React - Recoil](../03-facebook-s-experiment-recoil/README.md).
