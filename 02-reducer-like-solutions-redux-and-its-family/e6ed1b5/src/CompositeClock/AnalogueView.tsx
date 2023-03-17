@@ -4,11 +4,7 @@ import {
   dispatchEnterEditMode,
   dispatchExitEditMode,
 } from './AnalogueActions';
-import {
-  getAnalogueDisplayAngles,
-  useAnalogueReducer,
-  useAnalogueStateGetter,
-} from './AnalogueReducer';
+import { getDisplayAngles, useAnalogueReducer, useAnalogueStateGetter } from './AnalogueReducer';
 import styles from './AnalogueView.module.css';
 import { useTimeReducer, useTimeStateGetter } from './TimeReducer';
 
@@ -25,7 +21,7 @@ export const AnalogueView: FC<Props> = ({ className }) => {
   const getTimeState = useTimeStateGetter();
 
   const { isEditMode, editModeAngles } = state;
-  const displayAngles = useMemo(() => getAnalogueDisplayAngles(timeState), [timeState]);
+  const displayAngles = useMemo(() => getDisplayAngles(timeState), [timeState]);
 
   const angles = isEditMode ? editModeAngles : displayAngles;
 

@@ -1,5 +1,5 @@
 import type { AppStore } from '../reduxStore';
-import { AnalogueAngles, getAnalogueDisplayAngles } from './AnalogueReducer';
+import { AnalogueAngles, getDisplayAngles } from './AnalogueReducer';
 import { changeTimestamp } from './TimeActions';
 
 const TWO_PI = 2 * Math.PI;
@@ -20,7 +20,7 @@ export type AnalogueAction =
 export function dispatchEnterEditMode(store: AppStore): void {
   const { timeOfClock, analogueClock } = store.getState();
   if (analogueClock.isEditMode) return;
-  const editModeAngles = getAnalogueDisplayAngles(timeOfClock);
+  const editModeAngles = getDisplayAngles(timeOfClock);
   store.dispatch({
     type: ActionTypes.ENTER_EDIT_MODE,
     editModeAngles,

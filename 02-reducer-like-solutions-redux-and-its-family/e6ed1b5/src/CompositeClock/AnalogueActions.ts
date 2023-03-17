@@ -1,5 +1,5 @@
 import { Dispatch } from 'react';
-import { AnalogueAngles, AnalogueState, getAnalogueDisplayAngles } from './AnalogueReducer';
+import { AnalogueAngles, AnalogueState, getDisplayAngles } from './AnalogueReducer';
 import { changeTimestamp, TimeAction } from './TimeActions';
 import type { TimeState } from './TimeReducer';
 
@@ -22,7 +22,7 @@ export function dispatchEnterEditMode(
   getTimeState: () => TimeState
 ): void {
   if (getState().isEditMode) return;
-  const editModeAngles = getAnalogueDisplayAngles(getTimeState());
+  const editModeAngles = getDisplayAngles(getTimeState());
   dispatch({
     type: ActionTypes.ENTER_EDIT_MODE,
     editModeAngles,

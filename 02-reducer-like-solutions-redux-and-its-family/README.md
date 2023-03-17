@@ -312,7 +312,7 @@ export function analogueReducer(
   return state;
 }
 
-export function getAnalogueDisplayAngles(timeState: TimeState): AnalogueAngles {
+export function getDisplayAngles(timeState: TimeState): AnalogueAngles {
   const d = new Date(timeState.timestamp);
   return {
     hour: ((d.getHours() % 12) / 12) * TWO_PI + (d.getMinutes() / 60) * (TWO_PI / 12),
@@ -368,7 +368,7 @@ export function createAppStore(initialState: Partial<AppState> = {}): AppStore {
 ```diff
 // 77ed362/src/CompositeClock/AnalogueActions.ts
 +import type { AppStore } from '../reduxStore';
-+import { AnalogueAngles, getAnalogueDisplayAngles } from './AnalogueReducer';
++import { AnalogueAngles, getDisplayAngles } from './AnalogueReducer';
 +import { changeTimestamp } from './TimeActions';
 +
 +const TWO_PI = 2 * Math.PI;
@@ -391,7 +391,7 @@ export type AnalogueAction =
 +export function dispatchEnterEditMode(store: AppStore): void {
 +  const { timeOfClock, analogueClock } = store.getState();
 +  if (analogueClock.isEditMode) return;
-+  const editModeAngles = getAnalogueDisplayAngles(timeOfClock);
++  const editModeAngles = getDisplayAngles(timeOfClock);
 +  store.dispatch({
 +    type: ActionTypes.ENTER_EDIT_MODE,
 +    editModeAngles,
@@ -645,7 +645,7 @@ import {
   dispatchEnterEditMode,
   dispatchExitEditMode,
 } from './AnalogueActions';
-import { getAnalogueDisplayAngles } from './AnalogueReducer';
+import { getDisplayAngles } from './AnalogueReducer';
 import styles from './AnalogueView.module.css';
 
 const TWO_PI = 2 * Math.PI;
@@ -659,9 +659,7 @@ export const AnalogueView: FC<Props> = ({ className }) => {
   const dispatch = useAppDispatch();
   const state = useAppSelector((appState) => appState.analogueClock);
   const { isEditMode, editModeAngles } = state;
-  const displayAngles = useAppSelector((appState) =>
-    getAnalogueDisplayAngles(appState.timeOfClock)
-  );
+  const displayAngles = useAppSelector((appState) => getDisplayAngles(appState.timeOfClock));
 
   const angles = isEditMode ? editModeAngles : displayAngles;
 
@@ -1282,7 +1280,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 +  return (dispatch, getState) => {
 +    const { timeOfClock, analogueClock } = getState();
 +    if (analogueClock.isEditMode) return;
-+    const editModeAngles = getAnalogueDisplayAngles(timeOfClock);
++    const editModeAngles = getDisplayAngles(timeOfClock);
 +    dispatch(_enterEditMode(editModeAngles));
 +  };
 +}
@@ -1305,7 +1303,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 +  };
 +}
 +
-+export function getAnalogueDisplayAngles(timeState: TimeState): AnalogueAngles {
++export function getDisplayAngles(timeState: TimeState): AnalogueAngles {
 +  const d = new Date(timeState.timestamp);
 +  return {
 +    hour: ((d.getHours() % 12) / 12) * TWO_PI + (d.getMinutes() / 60) * (TWO_PI / 12),
@@ -2235,7 +2233,7 @@ export const {
   useTheStateGetter: useAnalogueStateGetter,
 } = contextualizeUseReducer(useRawReducer);
 
-export function getAnalogueDisplayAngles(timeState: TimeState): AnalogueAngles {
+export function getDisplayAngles(timeState: TimeState): AnalogueAngles {
   const d = new Date(timeState.timestamp);
   return {
     hour: ((d.getHours() % 12) / 12) * TWO_PI + (d.getMinutes() / 60) * (TWO_PI / 12),
@@ -2248,7 +2246,7 @@ export function getAnalogueDisplayAngles(timeState: TimeState): AnalogueAngles {
 ```diff
 // e6ed1b5/src/CompositeClock/AnalogueActions.ts
 +import { Dispatch } from 'react';
-+import { AnalogueAngles, AnalogueState, getAnalogueDisplayAngles } from './AnalogueReducer';
++import { AnalogueAngles, AnalogueState, getDisplayAngles } from './AnalogueReducer';
 +import { changeTimestamp, TimeAction } from './TimeActions';
 +import type { TimeState } from './TimeReducer';
 +
@@ -2273,7 +2271,7 @@ export type AnalogueAction =
 +  getTimeState: () => TimeState
 +): void {
 +  if (getState().isEditMode) return;
-+  const editModeAngles = getAnalogueDisplayAngles(getTimeState());
++  const editModeAngles = getDisplayAngles(getTimeState());
 +  dispatch({
 +    type: ActionTypes.ENTER_EDIT_MODE,
 +    editModeAngles,

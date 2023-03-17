@@ -41,7 +41,7 @@ export function analogueReducer(
   return state;
 }
 
-export function getAnalogueDisplayAngles(timeState: TimeState): AnalogueAngles {
+export function getDisplayAngles(timeState: TimeState): AnalogueAngles {
   const d = new Date(timeState.timestamp);
   return {
     hour: ((d.getHours() % 12) / 12) * TWO_PI + (d.getMinutes() / 60) * (TWO_PI / 12),

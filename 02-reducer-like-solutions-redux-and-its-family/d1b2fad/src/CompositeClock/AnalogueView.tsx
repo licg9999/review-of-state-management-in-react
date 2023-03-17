@@ -4,7 +4,7 @@ import {
   changeEditModeMinuteAngle,
   enterEditMode,
   exitEditMode,
-  getAnalogueDisplayAngles,
+  getDisplayAngles,
 } from './AnalogueSlice';
 import styles from './AnalogueView.module.css';
 
@@ -18,9 +18,7 @@ export const AnalogueView: FC<Props> = ({ className }) => {
   const dispatch = useAppDispatch();
   const state = useAppSelector((appState) => appState.analogueClock);
   const { isEditMode, editModeAngles } = state;
-  const displayAngles = useAppSelector((appState) =>
-    getAnalogueDisplayAngles(appState.timeOfClock)
-  );
+  const displayAngles = useAppSelector((appState) => getDisplayAngles(appState.timeOfClock));
 
   const angles = isEditMode ? editModeAngles : displayAngles;
 

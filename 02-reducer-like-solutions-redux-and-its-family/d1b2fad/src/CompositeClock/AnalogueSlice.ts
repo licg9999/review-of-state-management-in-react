@@ -53,7 +53,7 @@ export function enterEditMode(): AppThunk {
   return (dispatch, getState) => {
     const { timeOfClock, analogueClock } = getState();
     if (analogueClock.isEditMode) return;
-    const editModeAngles = getAnalogueDisplayAngles(timeOfClock);
+    const editModeAngles = getDisplayAngles(timeOfClock);
     dispatch(_enterEditMode(editModeAngles));
   };
 }
@@ -76,7 +76,7 @@ export function exitEditMode(submit: boolean = true): AppThunk {
   };
 }
 
-export function getAnalogueDisplayAngles(timeState: TimeState): AnalogueAngles {
+export function getDisplayAngles(timeState: TimeState): AnalogueAngles {
   const d = new Date(timeState.timestamp);
   return {
     hour: ((d.getHours() % 12) / 12) * TWO_PI + (d.getMinutes() / 60) * (TWO_PI / 12),
