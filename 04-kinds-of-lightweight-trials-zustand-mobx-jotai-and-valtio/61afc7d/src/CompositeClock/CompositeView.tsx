@@ -4,7 +4,7 @@ import { AnalogueView } from './AnalogueView';
 import styles from './CompositeView.module.css';
 import { useDigitalStore } from './DigitalStore';
 import { DigitalView } from './DigitalView';
-import { useTimeStore } from './TimeStore';
+import { TimeStoreProvider, useTimeStore } from './TimeStore';
 
 export const CompositeView: FC = () => {
   const { timestamp, changeTimestamp } = useTimeStore();
@@ -34,5 +34,13 @@ export const CompositeView: FC = () => {
       <AnalogueView />
       <DigitalView />
     </div>
+  );
+};
+
+export const CompositeClock: FC = () => {
+  return (
+    <TimeStoreProvider timestamp={Date.now()}>
+      <CompositeView />
+    </TimeStoreProvider>
   );
 };

@@ -1,1 +1,1 @@
-export { CompositeView as CompositeClock } from './CompositeView';
+export { CompositeClock } from './CompositeView';
