@@ -764,4 +764,4 @@ To sum up, doing state management with Recoil achieves predictable states changi
 
 ## What's next
 
-By far, reducer-like solutions, Redux and its family, and facebook's experiment, Recoil, have been reviewed compared with MVC pattern. Then, in the next article, continuing to answer the question #1 in the initial article, I would look into kinds of lightweight trials of state management in React - Zustand, MobX, Jotai and Valtio.
+By far, reducer-like solutions, Redux and its family, and facebook's experiment, Recoil, have been reviewed compared with MVC pattern. Then, in the next article, continuing to answer the question #1 in the initial article, I would look into [kinds of lightweight trials of state management in React - MobX, Zustand, Jotai and Valtio](../04-kinds-of-lightweight-trials-zustand-mobx-jotai-and-valtio/README.md).
