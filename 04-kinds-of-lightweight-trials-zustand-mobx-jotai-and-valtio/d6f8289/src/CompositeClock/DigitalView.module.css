@@ -1,0 +1,23 @@
+.root {
+  border: 1px solid black;
+  width: 200px;
+  line-height: 30px;
+  text-align: center;
+}
+
+.editor {
+  width: 100%;
+  text-align: center;
+  font-size: inherit;
+  padding: 0;
+  border: none;
+  outline: none;
+}
+
+.invalidHint {
+  line-height: 1.2;
+}
+
+.editMode.root {
+  outline: 2px solid skyblue;
+}

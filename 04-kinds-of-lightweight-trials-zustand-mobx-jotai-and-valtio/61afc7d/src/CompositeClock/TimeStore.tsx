@@ -1,4 +1,4 @@
-import { createContext, FC, PropsWithChildren, useContext, useRef } from 'react';
+import { createContext, FC, PropsWithChildren, useContext, useMemo } from 'react';
 import { createStore, useStore } from 'zustand';
 
 export interface TimeState {
@@ -25,7 +25,7 @@ export const TimeStoreProvider: FC<PropsWithChildren & Partial<TimeState>> = ({
   children,
   ...initialState
 }) => {
-  const timeStore = useRef(createTimeStore(initialState)).current;
+  const timeStore = useMemo(() => createTimeStore(initialState), [initialState]);
   return <TimeStoreContext.Provider value={timeStore}>{children}</TimeStoreContext.Provider>;
 };
 
