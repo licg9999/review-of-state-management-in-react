@@ -26,6 +26,7 @@ export const isEditModeTextValidAtom = atom<boolean>((get) =>
 export function useEnterEditMode(): () => void {
   const [digital, setDigital] = useAtom(digitalAtom);
   const displayText = useAtomValue(displayTextAtom);
+
   return useCallback(() => {
     if (digital.isEditMode) return;
     setDigital((state) => ({ ...state, isEditMode: true, editModeText: displayText }));
