@@ -758,9 +758,9 @@ Meanwhile, another major pro of Recoil is, as Recoil roots can be nested easily,
 
 ![Benefit 2 of Recoil](../assets/b9d6b1f82f291c02f441febb60a688a88ddfc1dd.jpg)
 
-Though, the biggest con of Recoil is, as Recoil cares much about asynchronousness, reading a state in state-changing hooks always requires checking the state of the state, which takes unnecessary cost. (Although the not-yet-finalized API `useRecoilTransaction_UNSTABLE` provides an easier way to read a state, it can't be foreseen what it will eventually look like after asynchronousness is taken into consideration.) Besides, another major con of Recoil is, keys with unique names in the scope of the nearest Recoil root for atom states and selector states are always required, which takes extra cost.
+Though, the biggest con of Recoil is, as Recoil cares much about asynchronousness, accessing a state in state-changing hooks always requires checking the state of the state, which takes unnecessary cost. (Although the not-yet-finalized API `useRecoilTransaction_UNSTABLE` provides an easier way to access a state, it can't be foreseen what it will eventually look like after asynchronousness is taken into consideration.) Besides, another major con of Recoil is, keys with unique names in the scope of the nearest Recoil root for atom states and selector states are always required, which takes extra cost.
 
-To sum up, doing state management with Recoil achieves predictable states changing with a bit cost of tracking state-changing logics, reading states in hooks and naming unique keys for states.
+To sum up, doing state management with Recoil achieves predictable states changing with a bit cost of tracking state-changing logics, accessing states in hooks and naming unique keys for states.
 
 ## What's next
 

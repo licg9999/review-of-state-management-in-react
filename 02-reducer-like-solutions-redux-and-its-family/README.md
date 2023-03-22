@@ -2121,7 +2121,7 @@ export function contextualizeUseReducer<TState, TAction>(
 }
 ```
 
-Additionally, when some `useCallback` wrapped function in a view component needs to access a state, it can use the state getter instead of the state directly to avoid getting itself regenerated on rerendered so to avoid performance issues to some degree. Though, a small problem of the state getter is, it can't access the latest value state immediately after an action is dispatched because the state accessed by the getter only gets refreshed on rerendered.
+Additionally, when some `useCallback` wrapped function in a view component needs to access a state, it can use the state getter instead of the state directly to avoid getting itself regenerated on rerendered so to avoid performance issues to some degree. Though, a small problem of the state getter is, it can't access the latest state value immediately after an action is dispatched because the state accessed by the getter only gets refreshed on rerendered.
 
 The general idea of the implementation with `useReducer` is almost the same as that with Redux except that there is no app-wide setup like the Redux setup.
 
@@ -2504,15 +2504,15 @@ export const CompositeClock: FC = () => {
 
 ## Review of state management with `useReducer`
 
-Compared with Redux, in `useReducer`, getting one state managed is almost the same except that there is no app-wide setup like the Redux setup but I need to build my own helper to get component-wide states managed as module-wide ones. Reducers and their actions are high-coupling and sometimes constitue circular dependency, which results in high cost of development. The modularity issue that a module can't have multiple instances with independent states is gone but building and using the helper of my own increases the cost.
+Compared with Redux, in `useReducer`, getting one state managed is almost the same except that there is no app-wide setup like the Redux setup so I need to build my own helper to get component-wide states managed as module-wide ones, and latest state values can't be accessed immediately after an action is dispatched so the write-read state-changing logics can't be programmed. Reducers and their actions are high-coupling and sometimes constitue circular dependency, which results in high cost of development. The modularity issue that a module can't have multiple instances with independent states is gone but building and using the helper of my own increases the cost.
 
-To sum up, doing state management with `useReducer` receives the same benefits and the harms as with Redux.
+To sum up, doing state management with `useReducer` receives the same benefits and the harms as with Redux but with inability of write-read state-changing logics.
 
 ## Summary
 
 After getting the example module, the composite clock, rebuilt with the 4 Redux family members, Redux, RTK, Flux and `useReducer`, it can be concluded that Redux family achieves predictable states changing despite the scale of the app but with high cost of development. Because of reducers processing old states and actions for new states with no side effect, states changing becomes predictable. Because of high coupling between reducers/stores and their actions and the modularity issue that a module can't have multiple instances with independent states, cost of development is high.
 
-Though, an interesting insight is, the 2 cons of Redux family are not intrinsic characters of reducer-like solutions because a reducer doesn't have to process more than one kind of actions and states don't have to be organized as app-wide ones. Although it's still undeniable that Redux family goes much further compared with MVC pattern, it's also completely possible that a better reducer-like solution can be designed.
+Though, an worth-mentioning insight is, the 2 cons of Redux family are not intrinsic characters of reducer-like solutions because a reducer doesn't have to process more than one kind of actions and states don't have to be organized as app-wide ones. Although it's still undeniable that Redux family goes much further compared with MVC pattern, it's also completely possible that a better reducer-like solution can be designed.
 
 ## What's next
 
