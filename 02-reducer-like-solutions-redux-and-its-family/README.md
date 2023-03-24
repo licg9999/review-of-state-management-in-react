@@ -997,7 +997,7 @@ Then, the example module built with Redux is complete. It can be previewed with 
 
 ## Review of state management with Redux
 
-In terms of state management, compared with MVC pattern, the brightest pro of Redux is, state-changing logics only live in reducers, actions are only for invoking state-changing logics in reducers, no state-changing logic actually lives in actions, and reducers process old states and actions for new states as pure functions without any side effect like events emitting in models, so there is no chance for state-changing logics in a reducer to get more state-changing logics somewhere else invoked regardless of how actions are dispatched to it, which makes states changing predictable despite the scale of the app. It can be perceived by checking how `TimeReducer.ts`, `AnalogueReducer.ts` and `DigitalReducer.ts` work with their actions. This benefits maintainability.
+In terms of state management, compared with MVC pattern, the brightest pro of Redux is, available state-changing logics on each state are clearly defined in each reducer, actions don't do anything more than invoking defined state-changing logics in reducers, reducers process old states and actions for new states as pure functions without any side effect like events emitting in models, and there is no chance for state-changing logics in a reducer to get more state-changing logics somewhere else invoked regardless of how actions are dispatched to it, so states changing becomes predictable despite the scale of the app. It can be perceived by checking how `TimeReducer.ts`, `AnalogueReducer.ts` and `DigitalReducer.ts` work with their actions. This benefits maintainability.
 
 ![Benefit of Redux](../assets/a344100d0e0a3440306b9551ca0431eb187f975a.jpg)
 

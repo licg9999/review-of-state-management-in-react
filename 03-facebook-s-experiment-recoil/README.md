@@ -750,7 +750,7 @@ The example module built with Recoil is complete. It can be previewed with the c
 
 ## Review of state management with Recoil
 
-In terms of state management, compared with MVC pattern, the brightest pro of Recoil is, states changing is actually made by `set` calls, state-changing hooks are only for invoking `set` calls or other state-changing hooks, and `set` calls get no more state-changing hooks invoked, so state-changing logics can be easily tracked, which makes states changing predictable at limited cost on scaling up the app. It can be perceived by checking how state-changing hooks `TimeState.ts`, `AnalogueState.ts` and `DigitalState.ts` work. This benefits maintainability.
+In terms of state management, compared with MVC pattern, the brightest pro of Recoil is, although state-changing hooks make side effects of changing one or more states and invoke zero or more other state-changing hooks, the very last step of any state-changing logics is all made by the `set` calls that change only one state at a time and don't get any more state-changing logics invoked, so state-changing logics can be easily tracked, which makes states changing predictable at limited cost on scaling up the app. It can be perceived by checking how state-changing hooks `TimeState.ts`, `AnalogueState.ts` and `DigitalState.ts` work. This benefits maintainability.
 
 ![Benefit 1 of Recoil](../assets/71c6ff0a715a8d5509524cc77248b5e9b7da7aef.jpg)
 
