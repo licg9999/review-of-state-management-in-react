@@ -11,6 +11,7 @@ export const timeAtom = atom<TimeState>({
 
 export function useChangeTimestamp(): (timestamp: number) => void {
   const setTime = useSetAtom(timeAtom);
+
   return useCallback(
     (timestamp) => {
       setTime((state) => ({ ...state, timestamp }));

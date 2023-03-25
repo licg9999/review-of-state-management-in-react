@@ -9,6 +9,7 @@ import { changeTimestamp, timeState, useHydrateTimeState } from './TimeState';
 
 export const CompositeView: FC = () => {
   useHydrateTimeState({ timestamp: Date.now() });
+
   const { isEditMode: isEditModeInAnalogueClock } = useSnapshot(analogueState);
   const { isEditMode: isEditModeInDigitalClock } = useSnapshot(digitalState);
 
