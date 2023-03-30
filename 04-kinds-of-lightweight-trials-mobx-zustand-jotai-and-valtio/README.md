@@ -2454,7 +2454,7 @@ To sum up, doing state management with MobX achieves predictable states changing
 
 ## Summary
 
-After reviewing the 4 lightweight trials of state management, MobX, Zustand, Jotai and Valtio, I think the most insightful finding can be, they actually work no worse than reducer-like solutions and with no less cost of development. Because state-changing logics can be either easily tracked or clearly defined, they all achieve predictable states changing. Because different opinions on state management are taken, they result in extra cost of development on different aspects. Because reading, writing, read-write, write-read state-changing logics can be all fulfilled, they have no inability in state management.
+After reviewing the 4 lightweight trials of state management, MobX, Zustand, Jotai and Valtio, I think the most insightful finding can be, they actually work no worse than reducer-like solutions and with no less cost of development. Because state-changing logics can be either easily tracked or clearly defined, they all achieve predictable states changing. Because different preferences on state management are taken, they result in extra cost of development on different aspects. Because reading, writing, read-write, write-read state-changing logics can be all fulfilled, they have no inability in state management.
 
 Besides, another interesting insight is, Zustand is designed like a lightweight version of RTK, Jotai is designed like a lightweight version of Recoil, Valtio is designed like a lightweight version of MobX. I mention this because noticing this might help user devs have a more comprehensive understanding on these libraries, but it's hard to tell whether the authors designed them in these ways on purpose or by accident.
 
