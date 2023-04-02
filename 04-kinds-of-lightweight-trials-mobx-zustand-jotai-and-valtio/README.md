@@ -2460,4 +2460,4 @@ Besides, another interesting insight is, Zustand is designed like a lightweight 
 
 ## What's next
 
-By far, as widely-accepted libraries of state management including reducer-like solutions, facebook's experiment, and lightweight trials have been reviewed, I think the question #1 in the initial article is answered well enough. Then, in the next article, I would make an overall summary and look into the question #2 in the initial article, _What does a better library of state management in React look like?_.
+By far, as widely-accepted libraries of state management including reducer-like solutions, facebook's experiment, and lightweight trials have been reviewed, I think the question #1 in the initial article is answered well enough. Then, in the next article, I would [make an overall summary and look into the question #2 in the initial article, _What does a better library of state management in React look like?_](../05-summary-and-prospect/README.md).
