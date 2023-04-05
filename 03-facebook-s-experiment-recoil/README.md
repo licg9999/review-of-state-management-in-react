@@ -4,7 +4,14 @@ After reviewing reducer-like solutions, Redux and its family, in [the last artic
 
 As mentioned previously, with [the example of the composite clock built with MVC pattern](https://github.com/licg9999/review-of-state-management-in-react/tree/master/01-getting-started-with-an-mvc-example) from the initial article as a baseline, for Recoil, I would rebuild the same example module with it and review how good it is in comparison with the baseline.
 
-## Recalling the example module
+## Table of contents
+
+- [Recalling the example module](#recalling_the_example_module)
+- [Example module built with Recoil](#example_module_built_with_recoil)
+- [Review of state management with Recoil](#review_of_state_management_with_recoil)
+- [What's next](#what_s_next)
+
+## Recalling the example module<a id="recalling_the_example_module"></a>
 
 Before that, let me recall the requirement of the example module a bit in case a reader might not have time to fully read the previous articles. If the previous articles have been read, this section can be skipped:
 
@@ -18,7 +25,7 @@ Then, there would be 3 related states seperately for the analogue clock, the dig
 
 ![Relation of the 3 states](../assets/ae484ce2d98d9bce4e87270373a8079572053b09.jpg)
 
-## Example module built with Recoil
+## Example module built with Recoil<a id="example_module_built_with_recoil"></a>
 
 Now, let me build the example module with Recoil. Again, `create-react-app` is used to initialize the React app. The option `--template typescript` is used to enable TypeScript:
 
@@ -748,7 +755,7 @@ export default App;
 
 The example module built with Recoil is complete. It can be previewed with the command `npm start` and its codebase is hosted at [review-of-state-management-in-react/03-facebook-s-experiment-recoil](https://github.com/licg9999/review-of-state-management-in-react/tree/master/03-facebook-s-experiment-recoil).
 
-## Review of state management with Recoil
+## Review of state management with Recoil<a id="review_of_state_management_with_recoil"></a>
 
 In terms of state management, compared with MVC pattern, the brightest pro of Recoil is, although state-changing hooks make side effects of changing one or more states and invoke zero or more other state-changing hooks, the very last step of any state-changing logics is all made by the `set` calls that change only one state at a time and don't get any more state-changing logics invoked, so state-changing logics can be easily tracked, which makes states changing predictable at limited cost on scaling up the app. It can be perceived by checking how state-changing hooks `TimeState.ts`, `AnalogueState.ts` and `DigitalState.ts` work. This benefits maintainability.
 
@@ -762,6 +769,6 @@ Though, the biggest con of Recoil is, as Recoil cares much about asynchronousnes
 
 To sum up, doing state management with Recoil achieves predictable states changing with a bit cost of tracking state-changing logics, accessing states in hooks and naming unique keys for states.
 
-## What's next
+## What's next<a id="what_s_next"></a>
 
 By far, reducer-like solutions, Redux and its family, and facebook's experiment, Recoil, have been reviewed compared with MVC pattern. Then, in the next article, continuing to answer the question #1 in the initial article, I would look into [kinds of lightweight trials of state management in React - MobX, Zustand, Jotai and Valtio](../04-kinds-of-lightweight-trials-mobx-zustand-jotai-and-valtio/README.md).

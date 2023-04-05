@@ -4,11 +4,26 @@ After reviewing [reducer-like solutions](../02-reducer-like-solutions-redux-and-
 
 As mentioned previously, with [the example of the composite clock built with MVC pattern](https://github.com/licg9999/review-of-state-management-in-react/tree/master/01-getting-started-with-an-mvc-example) from the initial article as a baseline, for each lightweight trial, I would rebuild the same example module with it and review how good it is in comparison with the baseline.
 
-## Lightweight trials
+## Table of contents
+
+- [Lightweight trials](#lightweight_trials)
+- [Recalling the example module](#recalling_the_example_module)
+- [Example module built with MobX](#example_module_built_with_mobx)
+- [Review of state management with MobX](#review_of_state_management_with_mobx)
+- [Example module built with Zustand](#example_module_built_with_zustand)
+- [Review of state management with Zustand](#review_of_state_management_with_zustand)
+- [Example module built with Jotai](#example_module_built_with_jotai)
+- [Review of state management with Jotai](#review_of_state_management_with_jotai)
+- [Example module built with Valtio](#example_module_built_with_valtio)
+- [Review of state management with Valtio](#review_of_state_management_with_valtio)
+- [Summary](#summary)
+- [What's next](#what_s_next)
+
+## Lightweight trials<a id="lightweight_trials"></a>
 
 By lightweight trials of state management, I mean those solutions that do state management in more straightforward ways unlike reducer-like solutions that always get states managed with multiple separate parts involved. A more straightforward solution can often result in lower cost but it may bring trouble in certain cases at the same time. It's worth figuring out what the straightforwardness of each widely-accepted lightweight trials would really end up with.
 
-## Recalling the example module
+## Recalling the example module<a id="recalling_the_example_module"></a>
 
 Before that, let me recall the requirement of the example module a bit in case a reader might not have time to fully read the previous articles. If the previous articles have been read, this section can be skipped:
 
@@ -22,7 +37,7 @@ Then, there would be 3 related states seperately for the analogue clock, the dig
 
 ![Relation of the 3 states](../assets/ae484ce2d98d9bce4e87270373a8079572053b09.jpg)
 
-## Example module built with MobX
+## Example module built with MobX<a id="example_module_built_with_mobx"></a>
 
 Firstly, I would look into MobX. Again, `create-react-app` is used to initialize the React app. The option `--template typescript` is used to enable TypeScript:
 
@@ -632,7 +647,7 @@ export default App;
 
 The example module built with MobX is complete. It can be previewed with the command `npm start` and its codebase is hosted at [review-of-state-management-in-react/04-kinds-of-lightweight-trials-mobx-zustand-jotai-and-valtio/8baa6b2](https://github.com/licg9999/review-of-state-management-in-react/tree/master/04-kinds-of-lightweight-trials-mobx-zustand-jotai-and-valtio/8baa6b2).
 
-## Review of state management with MobX
+## Review of state management with MobX<a id="review_of_state_management_with_mobx"></a>
 
 In terms of state management, compared with MVC pattern, the brightest pro of MobX is, although state-changing methods invoke other state-changing methods and trigger side effects of states changing, derived data changing as well as views rerendering, the side effects don't get any more state-changing logics invoked so the state-changing logics can be easily tracked, which makes states changing predictable at limited cost on scaling up the app. Meanwhile, similar to MVC pattern, another major pro of MobX is, each state leads to a store that hosts everything needed to get it managed including the state's values, the derived data, the state-changing methods, the references to other stores and more, which makes the app domain clearly split. It can be perceived by checking how `TimeStore.ts`, `AnalogueStore.ts` and `DigitalStore.ts` work. This benefits maintainability.
 
@@ -642,7 +657,7 @@ On the other hand, the biggest con of MobX is, as MobX works very independently 
 
 As a sum-up, doing state management with MobX achieves predictable states changing with a bit cost of tracking state-changing logics and correctly using the subscription mechanism.
 
-## Example module built with Zustand
+## Example module built with Zustand<a id="example_module_built_with_zustand"></a>
 
 Next, I would take a look at Zustand. Again, the React app is initialized with `create-react-app --template typescript`, `src/App.tsx` is cleared for later use, unused files are removed, the package of time helpers is installed:
 
@@ -1272,7 +1287,7 @@ export default App;
 
 The example module built with Zustand is complete. Its codebase is hosted at [review-of-state-management-in-react/04-kinds-of-lightweight-trials-mobx-zustand-jotai-and-valtio/61afc7d](https://github.com/licg9999/review-of-state-management-in-react/tree/master/04-kinds-of-lightweight-trials-mobx-zustand-jotai-and-valtio/61afc7d).
 
-## Review of state management with Zustand
+## Review of state management with Zustand<a id="review_of_state_management_with_zustand"></a>
 
 In terms of state management, compared with MVC pattern, the brightest pro of Zustand is, available state-changing logics on each state are clearly defined in each store, self-made hooks for states changing across stores don't do anything more than invoking defined state-changing logics in stores, and state-changing logics in stores don't get more state-changing logics somewhere else invoked regardless of how they get invoked, so states changing becomes predictable despite the scale of the app. It can be perceived by checking how `TimeStore.ts`, `AnalogueStore.ts` and `DigitalStore.ts` work. This benefits maintainability.
 
@@ -1280,7 +1295,7 @@ But meanwhile, the biggest con of Zustand is, it doesn't provide direct support 
 
 To sum up, doing state management with Zustand achieves predictable states changing despite the scale of the app but with a bit high cost of development. Further more, if comparing Zustand with Redux Toolkit(RTK), it's not hard to find that a Zustand store is pretty much like a RTK slice because each of them all hosts a state's values and basic state-changing methods that only change its own state's values, which also makes the 2 solutions end up with very similar usages and pros.
 
-## Example module built with Jotai
+## Example module built with Jotai<a id="example_module_built_with_jotai"></a>
 
 Next, let me check out Jotai. Again, the React app is initialized with `create-react-app --template typescript`, `src/App.tsx` is cleared for later use, unused files are removed, the package of time helpers is installed:
 
@@ -1917,7 +1932,7 @@ export default App;
 
 The example module built with Jotai is complete. Its codebase is hosted at [review-of-state-management-in-react/04-kinds-of-lightweight-trials-mobx-zustand-jotai-and-valtio/d6f8289](https://github.com/licg9999/review-of-state-management-in-react/tree/master/04-kinds-of-lightweight-trials-mobx-zustand-jotai-and-valtio/d6f8289).
 
-## Review of state management with Jotai
+## Review of state management with Jotai<a id="review_of_state_management_with_jotai"></a>
 
 In terms of state management, compared with MVC pattern, the brightest pro of Jotai is, although state-changing hooks make side effects of changing one or more states and invoke zero or more other state-changing hooks, the very last step of any state-changing logics is all made by the `set` calls that change only one state at a time and don't get any more state-changing logics invoked, so state-changing logics can be easily tracked, which makes states changing predictable at limited cost on scaling up the app. It can be perceived by checking how state-changing hooks `TimeAtom.ts`, `AnalogueAtom.ts` and `DigitalAtom.ts` work. This benefits maintainability.
 
@@ -1927,7 +1942,7 @@ For the cons of Jotai, I don't think there is noticeable one. It might look that
 
 As a sum-up, doing state management with Jotai achieves predictable states changing with a bit cost of tracking state-changing logics. By the way, if comparing Jotai with Recoil, it's easy to find that Jotai is just like a tailored version of Recoil and they have similar usages and pros.
 
-## Example module built with Valtio
+## Example module built with Valtio<a id="example_module_built_with_valtio"></a>
 
 Lastly, I would visit Valtio. Again, the React app is initialized with `create-react-app --template typescript`, `src/App.tsx` is cleared for later use, unused files are removed, the package of time helpers is installed:
 
@@ -2444,7 +2459,7 @@ export default App;
 
 The example module built with Valtio is complete. Its codebase is hosted at [review-of-state-management-in-react/04-kinds-of-lightweight-trials-mobx-zustand-jotai-and-valtio/f8e6217](https://github.com/licg9999/review-of-state-management-in-react/tree/master/04-kinds-of-lightweight-trials-mobx-zustand-jotai-and-valtio/f8e6217).
 
-## Review of state management with Valtio
+## Review of state management with Valtio<a id="example_module_built_with_valtio"></a>
 
 In terms of state management, compared with MVC pattern, the brightest pro of Valtio is, although state-changing methods invoke other state-changing methods and trigger side effects of states changing, derived data changing as well as views rerendering, the side effects don't get any more state-changing logics invoked so the state-changing logics can be easily tracked, which makes states changing predictable at limited cost on scaling up the app. It can be perceived by checking how `TimeState.ts`, `AnalogueState.ts` and `DigitalState.ts` work. This benefits maintainability.
 
@@ -2452,12 +2467,12 @@ But meanwhile, the biggest con of Valtio is, a module built with Valtio is actua
 
 To sum up, doing state management with MobX achieves predictable states changing with a bit cost of tracking state-changing logics and taking care of the modularity issue. Also, if comparing Valtio with MobX, it's not difficult to find that Valtio is like a simplified version of MobX and they have similar usages and pros.
 
-## Summary
+## Summary<a id="summary"></a>
 
 After reviewing the 4 lightweight trials of state management, MobX, Zustand, Jotai and Valtio, I think the most insightful finding can be, they actually work no worse than reducer-like solutions and with no less cost of development. Because state-changing logics can be either easily tracked or clearly defined, they all achieve predictable states changing. Because different preferences on state management are taken, they result in extra cost of development on different aspects. Because reading, writing, read-write, write-read state-changing logics can be all fulfilled, they have no inability in state management.
 
 Besides, another interesting insight is, Zustand is designed like a lightweight version of RTK, Jotai is designed like a lightweight version of Recoil, Valtio is designed like a lightweight version of MobX. I mention this because noticing this might help user devs have a more comprehensive understanding on these libraries, but it's hard to tell whether the authors designed them in these ways on purpose or by accident.
 
-## What's next
+## What's next<a id="what_s_next"></a>
 
 By far, as widely-accepted libraries of state management including reducer-like solutions, facebook's experiment, and lightweight trials have been reviewed, I think the question #1 in the initial article is answered well enough. Then, in the next article, I would [make an overall summary and look into the question #2 in the initial article, _What does a better library of state management in React look like?_](../05-summary-and-prospect/README.md).

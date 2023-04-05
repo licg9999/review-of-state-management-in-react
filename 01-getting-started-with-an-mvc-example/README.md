@@ -11,7 +11,15 @@ To answer the question #2, I would try best to think up a way of doing state man
 
 To complete the work, a series of articles entitled with 'Review of state management in React: ...' are getting written. And, this article, as the starting of the series, states the introduction as above and the former part of the answer to the question #1 as below.
 
-## Model-view-controller(MVC) pattern
+## Table of contents
+
+- [Model-view-controller(MVC) pattern](#model_view_controller_mvc_pattern)
+- [Requirement of the example module](#requirement_of_the_example_module)
+- [Example module built with MVC pattern](#example_module_built_with_mvc_pattern)
+- [Review of state management with MVC pattern](#review_of_state_management_with_mvc_pattern)
+- [What's next](#what_s_next)
+
+## Model-view-controller(MVC) pattern<a id="model_view_controller_mvc_pattern"></a>
 
 Since MVC pattern was [formally introduced](https://scholar.google.com/scholar?q=A+Description+of+the+Model-View-Controller+User+Interface+Paradigm+in+the+Smalltalk-80+System), it along with its variants has been dominating the engineering method of developing interactive systems. And, it says:
 
@@ -23,7 +31,7 @@ As models simulate the app domain, the states of models can directly represent t
 
 So, I would select MVC pattern as the previously mentioned 'most commonly used way of doing state management before any library of state management emerged' to build the example module.
 
-## Requirement of the example module
+## Requirement of the example module<a id="requirement_of_the_example_module"></a>
 
 To make effective comparisons, the example module should be complicated enough. It should consist of at least 2 components with multiple related states handling user interactions to a certain degree. Though, to avoid getting lost in details, it should also not be too complicated. Then, a composite clock looks appropriate.
 
@@ -37,7 +45,7 @@ Then, there would be 3 related states seperately for the analogue clock, the dig
 
 ![Relation of the 3 states](../assets/ae484ce2d98d9bce4e87270373a8079572053b09.jpg)
 
-## Example module built with MVC pattern
+## Example module built with MVC pattern<a id="example_module_built_with_mvc_pattern"></a>
 
 Now, let me build the baseline example module with MVC pattern. Here, `create-react-app` is used to initialize the React app. The option `--template typescript` is used to enable TypeScript:
 
@@ -748,7 +756,7 @@ export default App;
 
 Then, the example module built with MVC pattern is complete. It can be previewed with the command `npm start` and its codebase is hosted at [review-of-state-management-in-react/01-getting-started-with-an-mvc-example](https://github.com/licg9999/review-of-state-management-in-react/tree/master/01-getting-started-with-an-mvc-example).
 
-## Review of state management with MVC pattern
+## Review of state management with MVC pattern<a id="review_of_state_management_with_mvc_pattern"></a>
 
 In terms of state management, the brightest pro of MVC pattern is, every state leads to a model directly, then a model leads to its view and controller as needed, which makes the app domain clearly split. It can be perceived by checking how `TimeModel`, `AnalogueModel`, `DigitalModel` and their views and controllers are structured. This benefits maintainability.
 
@@ -764,6 +772,6 @@ As `AnalogueView` subscribes events `AnalogueModel.EVENTS.DISPLAY_ANGLES_CHANGED
 
 In an app with a limited number of states, the chain of state-changing events can be easily tracked, so the pro's benefit wins over the con's harm. But in an app with a bigger number of states, the chain of state-changing events can hardly be fully tracked, so the con's harm wins over the pro's benefit. As a sum-up, doing state management with MVC pattern can actually bring trouble in scaling up an app as the states changing becomes unpredictable.
 
-## What's next
+## What's next<a id="what_s_next"></a>
 
 By far, the baseline example module has been built with MVC pattern. Meanwhile, MVC pattern is reviewed based on it. Then, in the next article, continuing to answer the question #1, I would look into [reducer-like solutions of state management in React - Redux and its family](../02-reducer-like-solutions-redux-and-its-family/README.md).
