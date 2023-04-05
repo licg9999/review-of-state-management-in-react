@@ -9,7 +9,13 @@ Then, with [the example of the composite clock built with MVC pattern](https://g
 
 And now, by this article, I would summarize all of those reviews for a more comprehensive overall understanding of today's widely-accepted libraries of state management in React, then find out useful insights and try to give a prospect of a better library to answer the question #2.
 
-## Summary
+## Table of contents
+
+- [Summary](#summary)
+- [Prospect](#prospect)
+- [Postscript](#postscript)
+
+## Summary<a id="summary"></a>
 
 Firstly, briefs of all the reviews are collected from the previous articles in relatively consistent descriptions as follows for an easy reference:
 
@@ -64,7 +70,7 @@ In terms of the cons of the widely-accepted libraries, some are just the oppsite
 
 For cons of #1, resolving them requires rethinking of how the pros come into being, which is hard but not impossible. For cons of #2, resolving them requires thinking carefully of what is needed or not in state management, which is also doable. By the way, an interesting finding is, Jotai comes with the pro of #2 so avoids cons of #1, but also it doesn't commit any cons of #2, which makes it stand out. However, the pro of #2 is not as strong as the pro of #1 because safely invoking state-changing logics requires tracking state-changing logics a bit, even though the cost is limited.
 
-## Prospect
+## Prospect<a id="prospect"></a>
 
 Next, let me turn to the question #2, _What does a better library of state management in React look like?_. Today, there are libraries that achieve predictable states changing despite the scale of the app but at high overall cost of development, as well as libraries that achieve predictable states changing at limited cost of tracking state-changing logics but end up with low overall cost. So, what if here comes a library that achieves predictable states changing despite the scale of the app like the former ones but at cost of development no higher than the latter ones? Then, I would have the question answered.
 
@@ -812,6 +818,6 @@ The example module built with MyLib is complete. It can be previewed with the co
 
 In MyLib, available state-changing logics on one or more state are clearly defined in reducers and they don't get any state-changing logics on other states invoked regardless of how they are invoked, so I would know a reducer only changes wanted states without my tracking the detailed logics inside on invoking it, which makes states changing predictable despite the scale of the app. Meanwhile, no part is high-coupling but support for necessary usages is all provided, so cost of development is low. As a sum-up, doing state management with MyLib would be better than that with any today's widely-accepted libraries of state management in React.
 
-## Postscript
+## Postscript<a id="postscript"></a>
 
 By far, the series of articles entitled with 'Review of state management in React: ...' is finalized. All the today's widely-accepted libraries of state management have been reviewed and a prospect of a better library has been given. The whole codebase of articles and examples is hosted at [licg9999/review-of-state-management-in-react](https://github.com/licg9999/review-of-state-management-in-react). To develop a good React app, doing good state management is necessary. To do good state management, a good solution of state management is necessary. I believe these articles are not either the first ones or the last ones searching for better solutions. But, at lease, I only wish these articles can get us developers one step closer to one of them.
