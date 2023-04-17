@@ -110,7 +110,7 @@ Also, to help with time parsing and formating, `date-fns` is installed:
 $ npm i date-fns
 ```
 
-The example module, the composite clock, would be all placed in `src/CompositeClock`. To match the 3 requried states, there would be 3 models, `TimeModel`, `AnalogueModel` and `DigitalModel`. They provide methods for changing and getting their states, and broadcast events for subscribers on these states changed. Also, they fulfill the relation of the 3 states as required.
+The example module, the composite clock, would be all placed in `src/CompositeClock`. To match the 3 requried states, there would be 3 models, `TimeModel`, `AnalogueModel` and `DigitalModel`. They provide methods for changing and getting their states, and emit events for subscribers on these states changed. Also, they fulfill the relation of the 3 states as required.
 
 And for controllers and views, `TimeModel` has none, `AnalogueModel` has `AnalogueView` and `AnalogueController`, `DigitalModel` as `DigitalView` and `DigitalController`. Then, all these parts are glued together by `CompositeView` and `CompositeController` to fulfill the functionality.
 
@@ -758,19 +758,11 @@ Then, the example module built with MVC pattern is complete. It can be previewed
 
 ## Review of state management with MVC pattern<a id="review_of_state_management_with_mvc_pattern"></a>
 
-In terms of state management, the brightest pro of MVC pattern is, every state leads to a model directly, then a model leads to its view and controller as needed, which makes the app domain clearly split. It can be perceived by checking how `TimeModel`, `AnalogueModel`, `DigitalModel` and their views and controllers are structured. This benefits maintainability.
+In MVC pattern, state-changing logics are defined by model methods. To understand what states a model method changes, what model attributes the method changes needs to be tracked out by looking into function bodies of the method and all the direct or indirect subscribers of the state-changing event emitted by the method. Because more model methods can be invoked in or as subscribers of a state-changing event, more state-changing events can be emitted, then more and more model methods can be invoked. And, as the app scales up, fully tracking state-changing events can become very difficult. The result is, invoking any model method may lead to a [tangled weave](https://raw.githubusercontent.com/facebookarchive/flux/main/docs/In-Depth-Overview.md) of state-changing logics, which makes states changing in MVC pattern unpredictable. It can be perceived by checking how `TimeModel.ts`, `AnalogueModel.ts` and `DigitalModel.ts` work with each other and their views. Unpredictable states changing due to difficulties in fully tracking state-changing events makes up the biggest con of MVC pattern.
 
-![Benefit of MVC pattern](../assets/5a771f2b4e23ea0b5085dda9e1a40643c4fb8d99.jpg)
+But, meanwhile, a major pro of MVC pattern is, all the state-managing logics related to one state can be clearly defined in one model, which makes the app domain clearly split.
 
-But meanwhile, the biggest con of MVC pattern is, as state-changing methods in a model can get invoked to emit state-changing events and state-changing events can be subscribed by other models to get more state-changing methods invoked, states changing becomes unpredictable.
-
-Taking `AnalogueModel` as an example, when `AnalogueModel#exitEditMode` gets invoked, `TimeModel#changeTimestamp` gets invoked. And, `TimeModel#changeTimestamp` emits event `TimeModel.EVENTS.TIMESTAMP_CHANGED`, so `AnalogueModel#syncDisplayAngles` gets invoked as one of the event's subscribers. Then, `AnalogueModel#syncDisplayAngles` emits event `AnalogueModel.EVENTS.DISPLAY_ANGLES_CHANGED`. Afterwards, `AnalogueModel#exitEditMode` emits event `AnalogueModel.EVENTS.IS_EDIT_MODE_CHANGED`.
-
-As `AnalogueView` subscribes events `AnalogueModel.EVENTS.DISPLAY_ANGLES_CHANGED` and `AnalogueModel.EVENTS.IS_EDIT_MODE_CHANGED` at the same time, on `AnalogueModel#exitEditMode` invoked, it has to refresh itself 2 times, which harms efficiency. Besides, if there is any circular subscription to state-changing events and any state-changing method hits the circle, the whole app can easily go down, which harms reliability. To prevent that happening, the chain of state-changing events has to be carefully checked on developing models, which harms maintainability.
-
-![Harm of MVC pattern](../assets/04be6a9cdcb9a700539e1e0a58449f494f39eea7.jpg)
-
-In an app with a limited number of states, the chain of state-changing events can be easily tracked, so the pro's benefit wins over the con's harm. But in an app with a bigger number of states, the chain of state-changing events can hardly be fully tracked, so the con's harm wins over the pro's benefit. As a sum-up, doing state management with MVC pattern can actually bring trouble in scaling up an app as the states changing becomes unpredictable.
+As a sum-up, doing state management with MVC pattern makes unpredictable states changing (but with limited benefits in other aspects).
 
 ## What's next<a id="what_s_next"></a>
 

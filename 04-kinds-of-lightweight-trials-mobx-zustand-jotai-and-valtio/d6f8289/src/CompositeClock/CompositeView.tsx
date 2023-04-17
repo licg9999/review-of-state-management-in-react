@@ -1,4 +1,4 @@
-import { Provider, useAtomValue } from 'jotai';
+import { Provider, useAtomValue, useStore } from 'jotai';
 import { useHydrateAtoms } from 'jotai/utils';
 import { FC, useCallback, useEffect, useRef } from 'react';
 import { analogueAtom } from './AnalogueAtom';
@@ -11,15 +11,15 @@ import { timeAtom, useChangeTimestamp } from './TimeAtom';
 export const CompositeView: FC = () => {
   useHydrateAtoms([[timeAtom, { timestamp: Date.now() }] as const]);
 
+  const store = useStore();
   const { isEditMode: isEditModeInAnalogueClock } = useAtomValue(analogueAtom);
   const { isEditMode: isEditModeInDigitalClock } = useAtomValue(digitalAtom);
-  const { timestamp } = useAtomValue(timeAtom);
 
   const changeTimestamp = useChangeTimestamp();
 
   const calcTimestampCorrection = useCallback(() => {
-    return timestamp - Date.now();
-  }, [timestamp]);
+    return store.get(timeAtom).timestamp - Date.now();
+  }, [store]);
 
   const refTimeCorrection = useRef<number>(calcTimestampCorrection());
 

@@ -11,72 +11,71 @@ And now, by this article, I would summarize all of those reviews for a more comp
 
 ## Table of contents
 
-- [Summary](#summary)
-- [Prospect](#prospect)
+- [Summary for today's widely-accepted libraries](#summary_for_today_s_widely_accepted_libraries)
+- [Prospect of a better library](#prospect_of_a_better_library)
 - [Postscript](#postscript)
 
-## Summary<a id="summary"></a>
+## Summary for today's widely-accepted libraries<a id="summary_for_today_s_widely_accepted_libraries"></a>
 
-Firstly, briefs of all the reviews are collected from the previous articles in relatively consistent descriptions as follows for an easy reference:
+Firstly, for an easy reference, let me collect briefs of all the previous reviews from the previous articles as follows:
 
 _MVC pattern:_
 
-- _Pros:_ The app domain is clearly split.
-- _Cons:_ On scaling up the app, the chain of state-changing events can hardly be fully tracked so states changing becomes unpredictable.
+- _Pros:_ The app domain being clearly split.
+- _Cons:_ Unpredictable states changing due to difficulties in fully tracking state-changing events.
+- _Sum-up:_ Unpredictable states changing (but with limited benefits in other aspects).
 
 _Redux family:_
 
-- _Pros:_ Available state-changing logics on each state are clearly defined in each reducer and they don't get any more state-changing logics invoked regardless of how they are invoked, so states changing is predictable despite the scale of the app.
-- _Cons:_ (1) Getting one state managed requires multiple high-coupling parts. (2) It's not well supported to make module-wide states.
+- _Pros:_ Predictable one-state changing at no cost of tracking any state-changing logics and predictable multi-state changing at limited cost of tracking reducers/slices and actions.
+- _Cons:_ (1) High coupling between reducers and their actions. (2) Incomplete modularization by default.
+- _Sum-up_: Predictable states changing at limited cost of only tracking multi-state changing logics but at high overall cost of development.
 
 _Recoil:_
 
-- _Pros:_ (1) State-changing logics may get more state-changing logics invoked but the very last step of states changing don't, so states changing is predictable at limited cost of tracking state-changing logics. (2) It's easy to make module-wide states.
-- _Cons:_ Caring much about asynchronousness brings a burden of states accessing in state-changing logics.
+- _Pros:_ (1) Predictable states changing at limited cost of tracking state-changing hooks. (2) Nestability of Recoil roots.
+- _Cons:_ (1) Handling asynchronousness burdens. (2) Naming unique keys for states.
+- _Sum-up:_ Predictable states changing at limited cost of tracking state-changing logics as well as at extra cost of handling asynchronousness burdens and naming unique keys for states.
 
 _MobX:_
 
-- _Pros:_ (1) State-changing logics may get more state-changing logics invoked but the very last step of states changing don't, so states changing is predictable at limited cost of tracking state-changing logics. (2) The app domain is clearly split.
-- _Cons:_ A strong understanding of MobX's subscription mechanism is needed.
+- _Pros:_ (1) Predictable states changing at limited cost of tracking store methods. (2) The app domain being clearing split.
+- _Cons:_ A strong understanding of MobX's subscription mechanism needed.
+- _Sum-up:_ Predictable states changing at limited cost of tracking state-changing logics as well as at extra cost of correctly using the subscription mechanism.
 
 _Zustand:_
 
-- _Pros:_ Available state-changing logics on each state are clearly defined in each store and they don't get any more state-changing logics invoked regardless of how they are invoked, so states changing is predictable despite the scale of the app.
-- _Cons:_ It's not well supported to make (1) data deriving, (2) state-changing logics across stores, (3) initial states assigning dynamically on a view component initialization and (4) module-wide states.
+- _Pros:_ Predictable one-state changing at no cost of tracking any state-changing logics and predictable multi-state changing at limited cost of tracking store functions and multi-state changing hooks.
+- _Cons:_ (1) High coupling between stores and their multi-state changing hooks. (2) Incomplete modularization by default. (3) No strong support is provided for data deriving and initial states assigning.
+- _Sum-up:_ Predictable states changing at limited cost of only tracking multi-state changing logics but at a bit high overall cost of development.
 
 _Jotai:_
 
-- _Pros:_ (1) State-changing logics may get more state-changing logics invoked, but the very last step of states changing don't, so states changing is predictable at limited cost of tracking state-changing logics. (2) It's easy to make module-wide states.
+- _Pros:_ (1) Predictable states changing at limited cost of tracking state-changing hooks. (2) Nestability of Jotai store providers.
 - _Cons:_ Not much.
+- _Sum-up:_ Predictable states changing at limited cost of tracking state-changing logics.
 
 _Valtio:_
 
-- _Pros:_ State-changing logics may get more state-changing logics invoked but the very last step of states changing don't, so states changing is predictable at limited cost of tracking state-changing logics.
-- _Cons:_ It's not well supported to make module-wide states.
+- _Pros:_ Predictable states changing at limited cost of tracking state-changing hooks.
+- _Cons:_ (1) Incomplete modularization by default. (2) No strong support is provided for initial states assigning.
+- _Sum-up:_ Predictable states changing at limited cost of tracking state-changing logics as well as at extra cost of resolving incomplete modularization.
 
-Additionally, some details that are not listed here may be referenced later but they can always be found in the sections entitled with 'Review of state management with ...' in the previous articles.
+Some details referenced later might not be listed here but you can always can them in the previous articles.
 
-In terms of the pros of the widely-accepted libraries, predictable states changing is always archieved but with 2 different kinds of ideas.
+In terms of the pros of the widely-accepted libraries, they all achieve predictable states changing at limited cost of tracking state-changing logics to some extent. (1) Libraries like Redux family and Zustand achieve predictable states changing at limited cost of only tracking multi-state changing logics. In libraries of this kind, a one-state changing procedure is defined in a way of getting what one state it changes to be understood clearly by only checking its declarative information. A multi-state changing procedure is defined by involving one-state changing procedures arbitrarily. (2) Libraries like Recoil and MobX achieve predictable states changing at limited cost of tracking both one-state changing logics and multi-state changing logics. In libraries of this kind, a state-changing procedure is defined by invoking state-changing calls to one or more states arbitrarily.
 
-1. _One is,_ like Redux, available state-changing logics on each state are clearly defined and they don't get any more state-changing logics invoked regardless of how they are invoked. On invoking a snippet of clearly defined state-changing logics on a state, I would know it only changes that one state without my tracking the detailed logics inside. So, states changing is predictable despite the scale of the app.
-1. _The other is,_ like Recoil and MobX, state-changing logics can be arbitrarily defined but the very last step of states changing don't get any more state-changing logics invoked. On invoking a snippet of state-changing logics, I can't tell what states it changes but it's very easy to figure it out. So, states changing is predictable at limited cost of tracking state-changing logics.
+Libraries of kind #1 achieve more predictable states changing than those of kind #2, because the less state-changing logics need to be tracked, the less chances of untracked state-changing logics for unpredictability come. But, on the other hand, because high coupling between one-state changing precedures and multi-state changing procedures in libraries of kind #1 is unavoidable, overall cost of development with libraries of kind #1 is high. So, it's hard to tell libraries of which kind are better.
 
-Although the idea of #1 is better than that of #2 on scaling up the app, the overall cost of using a library of #1 may still be higher. The reason is, the need for a snippet of state-changing logics across multiple states always comes on scaling up the app, but to prepare it, defining the underlying snippets of state-changing logics per state is required. Very often, these underlying snippets of state-changing logics per state are defined only for that specific snippet of state-changing logics across multiple states and can't be reused somewhere else, which makes the 2 parts high-coupling. When some parts are high-coupling, building or maintaining one of them always involves building or maintaining the rest parts, which brings difficulties in development. So, #1 is better than #2 only theoretically but not practically.
+In terms of the cons of the widely-accepted libraries, except the by-design cons like high coupling that are binded with the pros, the cons are mostly caused by the preferences. (1) Like Redux, RTK, Zustand and Valtio, the preference of organizing states as app-wide ones by default leads to incomplete modularization by default. (2) Like Recoil, the preference of caring much about asynchronousness lets in burdens of handling it. (3) Like MobX, the preference of working independently from React results in a strong understanding of MobX's subscription mechanism. (4) Like Zustand and Valtio, the preference of no strong support for fundamental usages like data deriving and initial states assigning decreases the usability.
 
-In terms of the cons of the widely-accepted libraries, some are just the oppsite side of the pros, others are caused by the preferences:
+The by-preference cons bring more inconvenience than convenience in state managemenet, so the less cons of this kind are there, the better a library becomes. From the perspective of this, Jotai stands out a bit.
 
-1. _Cons by pros:_ Like Redux and Zustand, cons of high coupling between state-changing logics across multiple states and state-changing logics per state are not resolveable as long as these libraries continue holding their pros. Cons of this kind are binded with the pros.
-1. _Cons by preferences:_ Like Recoil, its preference is taking care of asynchronousness and letting in the burden because of it. Although asynchrounous state management is helped, synchronous state management which is the major part of state management is harmed, and also asynchronous logics in state management can easily be implemented as multi-step synchronous logics, which makes it not quite worthy. Like MobX, its preference is providing its own subscription mechanism. Although certain performance issues are improved, natural coding in React is harmed, and also it's argueable that a deeper integration with React can't do the same, which makes it look not good enough. Like Zustand and Valtio, their preference is providing no support for data deriving, initial states assigning dynamically on a view component initialization and module-wide states. Although it can be made by user devs, it is so often needed, which makes it look not well-designed.
+## Prospect of a better library<a id="prospect_of_a_better_library"></a>
 
-For cons of #1, resolving them requires rethinking of how the pros come into being, which is hard but not impossible. For cons of #2, resolving them requires thinking carefully of what is needed or not in state management, which is also doable. By the way, an interesting finding is, Jotai comes with the pro of #2 so avoids cons of #1, but also it doesn't commit any cons of #2, which makes it stand out. However, the pro of #2 is not as strong as the pro of #1 because safely invoking state-changing logics requires tracking state-changing logics a bit, even though the cost is limited.
+Next, let me get into the question #2, _What does a better library of state management in React look like?_. Today, some libraries achieve predictable states changing at limited cost of only tracking multi-state changing logics but at high overall cost of development, other libraries achieve predictable states changing at limited cost of tracking both one-state changing logics and multi-state changing logics but can end up with acceptable overall cost. So, what if here comes a new library that achieves predictable states changing without tracking either one-state changing logics or multi-state changing logics? Then, that will be the better library that achieve more predictable state changing than ever. And, the question becomes, how to design a new library of that kind?
 
-## Prospect<a id="prospect"></a>
-
-Next, let me turn to the question #2, _What does a better library of state management in React look like?_. Today, there are libraries that achieve predictable states changing despite the scale of the app but at high overall cost of development, as well as libraries that achieve predictable states changing at limited cost of tracking state-changing logics but end up with low overall cost. So, what if here comes a library that achieves predictable states changing despite the scale of the app like the former ones but at cost of development no higher than the latter ones? Then, I would have the question answered.
-
-Libraries of the former achieve predictable states changing despite the scale of the app because available state-changing logics on each state are clearly defined and they don't get any more state-changing logics invoked regardless of how they are invoked. Though, on the other hand, their high coupling between state-changing logics across multiple states and state-changing logics per state takes high cost of development. So, what if here comes a library where available state-changing logics on **one or more** states can be clearly defined and they don't get any more state-changing logics invoked regardless of how they are invoked? Then, high coupling would be eliminated, so the cost would be decreased.
-
-Thinking of being predictable, today's most predictable programming methodology can be functional programming. Thinking of states as data and states changing as data changing, [reduce function](../02-reducer-like-solutions-redux-and-its-family/README.md) can help. But, instead of using each reducer to define all available state-changing logics on one state like Redux, I would use each reducer to define only one kind of state-changing logics on one or more states. Because each reducer is a pure function without any side effect, there is no chance for state-changing logics in a reducer to get any state-changing logics on other states invoked regardless of they are invoked. Then, high coupling is eliminated and predictable states changing despite the scale of the app is still achieved. Also, as a reducer is only a pure function, it can be ordinarily called in other reducers knowing it brings no side effect. The reducers of this kind would be depicted as follows:
+Thinking of Redux, one-state changing logics are defined by reducers. Because each reducer is a pure function that processes one state to return a new state of the one without any side effects, what one state a reducer changes can be clearly understood by only reading the reducer's function declaration, which makes one-state changing in Redux predictable at no cost of tracking any state-changing logics. So, what if, in the new library, both one-state changing logics and multi-state changing logics can be defined by reducers? Then, both one-state changing and multi-state changing become predictable at no cost of tracking any state-changing logics. Also, as multi-state changing logics don't have to depend on one-state changing logics any more, high coupling between one-state changing and multi-state changing in Redux gets eliminated, which lowers overall cost of development. Reducers of that kind can be depicted as follows:
 
 ```ts
 type Reducer<TStates, TPayloads extends []> = (
@@ -85,7 +84,7 @@ type Reducer<TStates, TPayloads extends []> = (
 ) => TStates;
 ```
 
-Further more, every rest part involved in state management is supposed to be designed for low cost, too. For representing a state, the simplest form would be a config that identifies the state and provides the default value along with the type. Then, a Plain Old JavaScript Object(POJO) is good enough. To distinguish state configs from the states they represent, I can put the prefix `$` to names of these POJOs of state configs. For representing a derived datum, the simplest form would be the calculation process itself. Then, a pure function of a getter on one or more states is good enough. And, a data deriving getter can be ordinarily called in reducers or other data deriving getters, too. They would be depicted as follows:
+Further more, every rest part involved in state management is supposed to be designed for low cost, too. For representing a state, the simplest form would be a state config that identifies the state and provides the default state along with the state type. Then, a Plain Old JavaScript Object(POJO) can do the job well. To distinguish state configs from the states they represent, I can put the prefix `$` to names of these POJOs of state configs. For representing a derived datum, the simplest form would be the calculation procedure itself. Then, a pure function of a getter on one or more states can work. They can be depicted as follows:
 
 ```ts
 // The config of the 'stateA'
@@ -97,13 +96,13 @@ interface StateA {
   ...
 }
 
-// The calculation process of the 'derivedDatumX'
+// The calculation procedure of the 'derivedDatumX'
 function getDerivedDatumX(...): ... {
   ...
 };
 ```
 
-I would call this better library of state management in React as 'MyLib' in this article. Then, the minimal interfaces provided by MyLib are can be listed as follows. The 'operate' invokes reducers for states changing. The 'snapshot' accesses states for rendering. The 'store' along with the store provider host states:
+I would call this new library of state management in React as 'MyLib' for now. The minimal interfaces provided by MyLib are can be listed as follows. The 'operate' invokes reducers for states changing. The 'snapshot' accesses states for rendering. The 'store' along with the store provider host states:
 
 ```ts
 import type { PropsWithChildren } from 'react';
@@ -152,9 +151,21 @@ type ParametersExcept0<TFn extends AnyFn> = TFn extends (arg0: any, ...args: inf
   : never;
 ```
 
-The preliminary implementation of MyLib is hosted at [review-of-state-management-in-react/05-summary-and-prospect/src/MyLib](https://github.com/licg9999/review-of-state-management-in-react/tree/master/05-summary-and-prospect/src/MyLib). Now, let me rebuild the baseline example module with MyLib to see how good it is in comparison. For the requirement of the example module, it can be found in any starting sections of any previous articles and please read it if needed.
+The preliminary implementation of MyLib is hosted at [review-of-state-management-in-react/05-summary-and-prospect/src/MyLib](https://github.com/licg9999/review-of-state-management-in-react/tree/master/05-summary-and-prospect/src/MyLib). Now, let me rebuild the baseline example module with MyLib to check out how good it is in comparison.
 
-Again, `create-react-app` is used to initialize the React app. The option `--template typescript` is used to enable TypeScript:
+For the requirement of the example module, let me recall it a bit in case a reader might not have time to fully read the previous articles. If the previous articles have been read, following paragraphs can be skipped:
+
+![Demonstration of the composite clock](../assets/b6fdff7965bad4178e4486cd7b99c2b604450e4a.gif)
+
+A composite clock is an interactive module that has 2 components, an analogue clock and a digital clock. The 2 child clocks always tick synchronously and can be set to new time by users. The analogue one can have its minute hand dragged. The digital one can have its text edited.
+
+Although it's doable to use single big shared state for this example module, it's not always a good idea to use single big shared state for a real-world app because it brings poor maintainability of quality attributes([ISO/IEC 9126-1:2001](https://www.iso.org/standard/22749.html)). So, to closely emulate real-world situations, multiple related states are used here.
+
+Then, there would be 3 related states seperately for the analogue clock, the digital clock and time itself. The state of time keeps a timestamp for the whole module. The states of the child clocks derive display data from the timestamp and accept user input data for setting the timestamp.
+
+![Relation of the 3 states](../assets/ae484ce2d98d9bce4e87270373a8079572053b09.jpg)
+
+Then, `create-react-app` is used to initialize the React app. The option `--template typescript` is used to enable TypeScript:
 
 ```sh
 $ npx create-react-app 05-summary-and-prospect --template typescript
@@ -213,7 +224,7 @@ $ rm src/App.css src/App.test.tsx src/logo.svg
 $ npm i date-fns
 ```
 
-Then, to use MyLib, just copy [it](https://github.com/licg9999/review-of-state-management-in-react/tree/master/05-summary-and-prospect/src/MyLib) into `src/MyLib`. Also, to get `for...of` statements in MyLib to work, `tsconfig.json` needs to be adjusted a bit:
+Then, to use MyLib, let me copy [it](https://github.com/licg9999/review-of-state-management-in-react/tree/master/05-summary-and-prospect/src/MyLib) into `src/MyLib`. Besides, to get `for...of` statements in MyLib to work, `tsconfig.json` needs to be adjusted a bit:
 
 ```diff
 {
@@ -242,7 +253,7 @@ Then, to use MyLib, just copy [it](https://github.com/licg9999/review-of-state-m
 
 The example module, the composite clock, would be all placed in `src/CompositeClock`. To match the 3 requried states, there would be 3 groups of state configs, data deriving getters and state-changing reducers.
 
-And for view components, there are `AnalogueView.ts` for the analogue clock, `DigitalView.ts` for the digital clock, and `CompositeView.ts` as a glue. Besides, store providers are initialized.
+And for view components, there are `AnalogueView.ts` for the analogue clock, `DigitalView.ts` for the digital clock, and `CompositeView.ts` as a glue. Besides, store providers are initialized at little cost.
 
 ![Relation of parts in the composite clock built with MyLib](../assets/706378bced13ade2f6fbc9bd20e4a97f42a08443.jpg)
 
@@ -816,8 +827,12 @@ export default App;
 
 The example module built with MyLib is complete. It can be previewed with the command `npm start` and its codebase is hosted at [review-of-state-management-in-react/05-summary-and-prospect](https://github.com/licg9999/review-of-state-management-in-react/tree/master/05-summary-and-prospect).
 
-In MyLib, available state-changing logics on one or more state are clearly defined in reducers and they don't get any state-changing logics on other states invoked regardless of how they are invoked, so I would know a reducer only changes wanted states without my tracking the detailed logics inside on invoking it, which makes states changing predictable despite the scale of the app. Meanwhile, no part is high-coupling but support for necessary usages is all provided, so cost of development is low. As a sum-up, doing state management with MyLib would be better than that with any today's widely-accepted libraries of state management in React.
+In MyLib, both one-state changing logics and multi-state changing logics are defined by reducers. Because each reducer is a pure function that processes one or multi state to return new states of the one or the multi without any side effects, what states a reducer changes can be clearly understood by only reading the reducer's function declaration, which makes both one-state changing and multi-state changing in MyLib predictable at no cost of tracking any state-changing logics. Predictable states changing without tracking any function bodies makes up the brightest pro of MyLib.
+
+Meanwhile, as multi-state changing logics don't have to depend on one-state changing logics, there is no more high coupling between one-state changing and multi-state changing. Also, as all the previously found by-preference cons are resolved by design, no extra cost of development is taken. So, there is no noticeable con.
+
+As a sum-up, doing state management with MyLib achieves predictable states changing without tracking any state-changing logics and at low overall cost of development. In this way, a better library of state management in React can be designed.
 
 ## Postscript<a id="postscript"></a>
 
-By far, the series of articles entitled with 'Review of state management in React: ...' is finalized. All the today's widely-accepted libraries of state management have been reviewed and a prospect of a better library has been given. The whole codebase of articles and examples is hosted at [licg9999/review-of-state-management-in-react](https://github.com/licg9999/review-of-state-management-in-react). To develop a good React app, doing good state management is necessary. To do good state management, a good solution of state management is necessary. I believe these articles are not either the first ones or the last ones searching for better solutions. But, at lease, I only wish these articles can get us developers one step closer to one of them.
+By far, the series of articles entitled with 'Review of state management in React: ...' gets finalized. All the today's widely-accepted libraries of state management have been reviewed and a prospect of a better library has been given. The whole codebase of articles and examples is hosted at [licg9999/review-of-state-management-in-react](https://github.com/licg9999/review-of-state-management-in-react). To develop a good React app, doing good state management is necessary. To do good state management, a good solution of state management is necessary. I believe these articles are not either the first ones or the last ones searching for better solutions of state management. But, at lease, I only wish these articles can get us developers one step closer to one of them.

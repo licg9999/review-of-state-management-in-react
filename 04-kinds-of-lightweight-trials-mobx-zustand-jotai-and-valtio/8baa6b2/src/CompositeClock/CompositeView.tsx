@@ -7,12 +7,13 @@ import { StoresProvider, useStores } from './StoresContext';
 
 export const CompositeView: FC = observer(() => {
   const {
-    time: { timestamp, changeTimestamp },
+    time,
     analogue: { isEditMode: isEditModeInAnalogueClock },
     digital: { isEditMode: isEditModeInDigitalClock },
   } = useStores();
+  const { changeTimestamp } = time;
 
-  const calcTimestampCorrection = useCallback(() => timestamp - Date.now(), [timestamp]);
+  const calcTimestampCorrection = useCallback(() => time.timestamp - Date.now(), [time]);
 
   const refTimeCorrection = useRef<number>(calcTimestampCorrection());
 

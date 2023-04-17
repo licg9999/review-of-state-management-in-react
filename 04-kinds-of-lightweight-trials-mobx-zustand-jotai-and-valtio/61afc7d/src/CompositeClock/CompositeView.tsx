@@ -7,11 +7,14 @@ import { DigitalView } from './DigitalView';
 import { TimeStoreProvider, useTimeStore } from './TimeStore';
 
 export const CompositeView: FC = () => {
-  const { timestamp, changeTimestamp } = useTimeStore();
+  const { getTimestamp, changeTimestamp } = useTimeStore(({ getTimestamp, changeTimestamp }) => ({
+    getTimestamp,
+    changeTimestamp,
+  }));
   const isEditModeInAnalogueClock = useAnalogueStore(({ isEditMode }) => isEditMode);
   const isEditModeInDigitalClock = useDigitalStore(({ isEditMode }) => isEditMode);
 
-  const calcTimestampCorrection = useCallback(() => timestamp - Date.now(), [timestamp]);
+  const calcTimestampCorrection = useCallback(() => getTimestamp() - Date.now(), [getTimestamp]);
 
   const refTimeCorrection = useRef<number>(calcTimestampCorrection());
 

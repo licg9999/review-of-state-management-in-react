@@ -16,12 +16,12 @@ As mentioned previously, with [the example of the composite clock built with MVC
 - [Review of state management with Jotai](#review_of_state_management_with_jotai)
 - [Example module built with Valtio](#example_module_built_with_valtio)
 - [Review of state management with Valtio](#review_of_state_management_with_valtio)
-- [Summary](#summary)
+- [Summary for lightweight trials](#summary_for_lightweight_trials)
 - [What's next](#what_s_next)
 
 ## Lightweight trials<a id="lightweight_trials"></a>
 
-By lightweight trials of state management, I mean those solutions that do state management in more straightforward ways unlike reducer-like solutions that always get states managed with multiple separate parts involved. A more straightforward solution can often result in lower cost but it may bring trouble in certain cases at the same time. It's worth figuring out what the straightforwardness of each widely-accepted lightweight trials would really end up with.
+By lightweight trials of state management, I mean those solutions that do state management in more straightforward ways unlike Redux family that involves multiple separate parts for state management. Intuitively, a more straightforward solution can result in lower overall cost of development but it may bring trouble in certain cases. Though, it's worth figuring out what the straightforwardness of each widely-accepted lightweight trials would really end up with.
 
 ## Recalling the example module<a id="recalling_the_example_module"></a>
 
@@ -108,7 +108,7 @@ Then, to use MobX, `mobx` and `mobx-react-lite` are installed:
 $ npm i mobx mobx-react-lite
 ```
 
-The example module, the composite clock, would be all placed in `src/CompositeClock`. To match the 3 requried states, there would be 3 stores, `TimeStore.ts`, `AnalogueStore.ts` and `DigitalStore.ts`. In MobX, a store hosts a state's values, the derived data, the state-changing methods as well as the references to other stores.
+The example module, the composite clock, would be all placed in `src/CompositeClock`. To match the 3 requried states, there would be 3 stores, `TimeStore.ts`, `AnalogueStore.ts` and `DigitalStore.ts`. In MobX, a store hosts properties of a state, the derived data, the methods of states changing as well as the references to other stores.
 
 And for view components, there are `AnalogueView.ts` for the analogue clock, `DigitalView.ts` for the digital clock, and `CompositeView.ts` as a glue. Besides, a React context that provides the stores is needed so stores can be initialized and accessed.
 
@@ -577,12 +577,13 @@ import { StoresProvider, useStores } from './StoresContext';
 
 export const CompositeView: FC = observer(() => {
   const {
-    time: { timestamp, changeTimestamp },
+    time,
     analogue: { isEditMode: isEditModeInAnalogueClock },
     digital: { isEditMode: isEditModeInDigitalClock },
   } = useStores();
+  const { changeTimestamp } = time;
 
-  const calcTimestampCorrection = useCallback(() => timestamp - Date.now(), [timestamp]);
+  const calcTimestampCorrection = useCallback(() => time.timestamp - Date.now(), [time]);
 
   const refTimeCorrection = useRef<number>(calcTimestampCorrection());
 
@@ -649,13 +650,13 @@ The example module built with MobX is complete. It can be previewed with the com
 
 ## Review of state management with MobX<a id="review_of_state_management_with_mobx"></a>
 
-In terms of state management, compared with MVC pattern, the brightest pro of MobX is, although state-changing methods invoke other state-changing methods and trigger side effects of states changing, derived data changing as well as views rerendering, the side effects don't get any more state-changing logics invoked so the state-changing logics can be easily tracked, which makes states changing predictable at limited cost on scaling up the app. Meanwhile, similar to MVC pattern, another major pro of MobX is, each state leads to a store that hosts everything needed to get it managed including the state's values, the derived data, the state-changing methods, the references to other stores and more, which makes the app domain clearly split. It can be perceived by checking how `TimeStore.ts`, `AnalogueStore.ts` and `DigitalStore.ts` work. This benefits maintainability.
+In MobX, state-changing logics are defined by store methods. To understand what states a store method changes, what store properties the method changes needs to be tracked out by looking into function bodies of the method and other methods invoked by the method. But, unlike tracking state-changing events in MVC pattern, the tracking work in MobX store methods is as easy as tracking plain functions, which makes states changing in MobX predictable at limited cost. It can be perceived by checking how store methods in `TimeStore.ts`, `AnalogueStore.ts` and `DigitalStore.ts` work. Predictable states changing at limited cost of tracking store methods makes up the brightest pro of MobX.
 
-![Benefit of MobX](../assets/37ff22d0e4aac23211cf8ba4d77ce90c7a61ef43.jpg)
+Meanwhile, another major pro of MobX is, all the state-managing logics related to one state can be clearly defined in one model, which makes the app domain clearly split.
 
-On the other hand, the biggest con of MobX is, as MobX works very independently from React, a strong understanding of MobX's subscription mechanism is needed so to build the stores context and wrap view components with `observer` correctly, which takes extra cost of development. It can be seen by checking how `StoresContext.tsx`, `AnalogueView.tsx` and `DigitalView.tsx` are constructed.
+But, on the other hand, the biggest con of MobX is, as MobX works very independently from React, a strong understanding of MobX's subscription mechanism is needed so to build the stores context and wrap view components with `observer` correctly, which takes extra cost of development. It can be seen by checking how `StoresContext.tsx`, `AnalogueView.tsx` and `DigitalView.tsx` are constructed.
 
-As a sum-up, doing state management with MobX achieves predictable states changing with a bit cost of tracking state-changing logics and correctly using the subscription mechanism.
+To sum up, doing state management with MobX achieves predictable states changing at limited cost of tracking state-changing logics as well as at extra cost of correctly using the subscription mechanism.
 
 ## Example module built with Zustand<a id="example_module_built_with_zustand"></a>
 
@@ -692,17 +693,17 @@ Then, to use Zustand, `zustand` is installed:
 $ npm i zustand
 ```
 
-Similar to the implementation with MobX, the composite clock would be all placed in `src/CompositeClock`. To match the 3 requried states, there would be 3 stores, `TimeStore.ts`, `AnalogueStore.ts` and `DigitalStore.ts`. In Zustand, a store only hosts a state's values and basic state-changing methods that only change its own state's values. And, no official support is given to derive data from states or invoke state-changing methods across stores, so I would, on my own, make getters for data deriving and hooks for states changing across stores.
+Similarly, the composite clock would be all placed in `src/CompositeClock`. To match the 3 requried states, there would be 3 stores, `TimeStore.ts`, `AnalogueStore.ts` and `DigitalStore.ts`. In Zustand, a store hosts a state and one-state changing functions to the state. For multi-state changing, hooks using one-state changing functions provided from stores are built. For data deriving, getters on states are built.
 
-And for view components, there are `AnalogueView.ts` for the analogue clock, `DigitalView.ts` for the digital clock, and `CompositeView.ts` as a glue. Another noticeable tip is, the default practice of creating a store in Zustand only assigns the initial state statically on its creation but not dynamically on a view component initialization, so I would follow [the official guide](https://github.com/pmndrs/zustand/blob/main/docs/guides/initialize-state-with-props.md) to use a React context for assigning the initial state dynamically on a view component initialization when needed.
+And for view components, there are `AnalogueView.ts` for the analogue clock, `DigitalView.ts` for the digital clock, and `CompositeView.ts` as a glue. One tip is, for initial states assigning, it needs to be made using React contexts following [the official guide](https://github.com/pmndrs/zustand/blob/main/docs/guides/initialize-state-with-props.md).
 
-![Relation of parts in the composite clock built with Zustand](../assets/574b274ea7007551a2ed994c8bc98b738d0032e2.jpg)
+![Relation of parts in the composite clock built with Zustand](../assets/9ff39bca23a46108bd61f08900455f0281d71d06.jpg)
 
 Then, the store for the state of time is coded as follows:
 
 ```ts
 // 61afc7d/src/CompositeClock/TimeStore.tsx
-import { createContext, FC, PropsWithChildren, useContext, useMemo } from 'react';
+import { createContext, FC, PropsWithChildren, useContext, useRef } from 'react';
 import { createStore, useStore } from 'zustand';
 
 export interface TimeState {
@@ -710,13 +711,19 @@ export interface TimeState {
 }
 
 export interface TimeActions {
+  getTimestamp(): number;
   changeTimestamp(timestamp: number): void;
 }
 
 function createTimeStore(initialState: Partial<TimeState> = {}) {
-  return createStore<TimeState & TimeActions>((set) => ({
+  return createStore<TimeState & TimeActions>((set, get) => ({
     timestamp: 0,
     ...initialState,
+
+    getTimestamp() {
+      return get().timestamp;
+    },
+
     changeTimestamp(timestamp) {
       set({ timestamp });
     },
@@ -729,8 +736,13 @@ export const TimeStoreProvider: FC<PropsWithChildren & Partial<TimeState>> = ({
   children,
   ...initialState
 }) => {
-  const timeStore = useMemo(() => createTimeStore(initialState), [initialState]);
-  return <TimeStoreContext.Provider value={timeStore}>{children}</TimeStoreContext.Provider>;
+  const refTimeStore = useRef<ReturnType<typeof createTimeStore>>();
+  if (!refTimeStore.current) {
+    refTimeStore.current = createTimeStore(initialState);
+  }
+  return (
+    <TimeStoreContext.Provider value={refTimeStore.current}>{children}</TimeStoreContext.Provider>
+  );
 };
 
 export function useTimeStore(): TimeState & TimeActions;
@@ -1218,11 +1230,14 @@ import { DigitalView } from './DigitalView';
 import { TimeStoreProvider, useTimeStore } from './TimeStore';
 
 export const CompositeView: FC = () => {
-  const { timestamp, changeTimestamp } = useTimeStore();
+  const { getTimestamp, changeTimestamp } = useTimeStore(({ getTimestamp, changeTimestamp }) => ({
+    getTimestamp,
+    changeTimestamp,
+  }));
   const isEditModeInAnalogueClock = useAnalogueStore(({ isEditMode }) => isEditMode);
   const isEditModeInDigitalClock = useDigitalStore(({ isEditMode }) => isEditMode);
 
-  const calcTimestampCorrection = useCallback(() => timestamp - Date.now(), [timestamp]);
+  const calcTimestampCorrection = useCallback(() => getTimestamp() - Date.now(), [getTimestamp]);
 
   const refTimeCorrection = useRef<number>(calcTimestampCorrection());
 
@@ -1289,11 +1304,17 @@ The example module built with Zustand is complete. Its codebase is hosted at [re
 
 ## Review of state management with Zustand<a id="review_of_state_management_with_zustand"></a>
 
-In terms of state management, compared with MVC pattern, the brightest pro of Zustand is, available state-changing logics on each state are clearly defined in each store, self-made hooks for states changing across stores don't do anything more than invoking defined state-changing logics in stores, and state-changing logics in stores don't get more state-changing logics somewhere else invoked regardless of how they get invoked, so states changing becomes predictable despite the scale of the app. It can be perceived by checking how `TimeStore.ts`, `AnalogueStore.ts` and `DigitalStore.ts` work. This benefits maintainability.
+In Zustand, one-state changing logics are defined by store functions. As a store function is restricted to changing the one state represented by the store, what one state a store function changes can be clearly understood by only checking what one state the store represents, which makes one-state changing in Zustand predictable at no cost of tracking any state-changing logics. Meanwhile, multi-state changing logics are defined by multi-state changing hooks. Though, to understand what states a multi-state changing hook changes, what store functions the hook invokes needs to be tracked out by looking into function bodies of the hook and other hooks invoked by the hook. But, unlike tracking state-changing events in MVC pattern, the tracking work in Zustand multi-state changing hooks is as easy as tracking plain functions, which makes multi-state changing in Zustand predictable at limited cost. It can be perceived by checking how `TimeStore.ts`, `AnalogueStore.ts` and `DigitalStore.ts` work. Predictable one-state changing at no cost of tracking any state-changing logics and predictable multi-state changing at limited cost of tracking store functions and multi-state changing hooks make up the brightest pro of Zustand.
 
-But meanwhile, the biggest con of Zustand is, it doesn't provide direct support for deriving data from states, invoking state-changing methods across stores, assigning initial states dynamically on a view component initialization and organizing non-app-wide states, so extra cost of development is needed to fulfill these usages. Also, even if there is direct support for these usages, states changing across stores would still be costly as long as Zustand continues holding its brightest pro. A worth-mentioning tip is, as a store can provide latest-state-accessing methods using the `get` callbacks, self-made hooks for states changing across stores can access latest states immediately after changing states so to make up any kinds of state-changing logics.
+But, on the other hand, because building and maintaining multi-state changing hooks always involve building and maintaining underlying one-state changing store function, multi-state changing hooks and their underlying stores become high-coupling, which brings difficulties in development, thus overall cost of development becomes high. High coupling between stores and their multi-state changing hooks leads to the biggest con of Zustand.
 
-To sum up, doing state management with Zustand achieves predictable states changing despite the scale of the app but with a bit high cost of development. Further more, if comparing Zustand with Redux Toolkit(RTK), it's not hard to find that a Zustand store is pretty much like a RTK slice because each of them all hosts a state's values and basic state-changing methods that only change its own state's values, which also makes the 2 solutions end up with very similar usages and pros.
+Besides, a module built with Zustand is actually not completely modularized by default, because when a module gets initialized for multiple instances, these instances are sharing exactly the same states in the app-wide states. To resolve this issue, a stores context that hosts module-wide states needs to be introduced per module, which is costly in Zustand. Incomplete modularization by default is another major con of Zustand.
+
+Besides, a minor con of Zustand is, no strong support is provided for data deriving and initial states assigning, so extra cost of development is needed.
+
+A worth-mentioning tip is, as a store can provide latest-state-accessing function using the get calls, latest states can be accessed in state-changing hooks immediately after a store function is invoked, thus any kinds of state-changing logics can be coded.
+
+To sum up, doing state management with Zustand achieves predictable states changing at limited cost of only tracking multi-state changing logics but at a bit high overall cost of development. Further more, if comparing Zustand with Redux Toolkit(RTK), it's not hard to find that Zustand stores are pretty much like RTK slices, which makes Zustand pretty much like a lightweight verson of RTK.
 
 ## Example module built with Jotai<a id="example_module_built_with_jotai"></a>
 
@@ -1330,7 +1351,7 @@ Then, to use Jotai, `jotai` is installed:
 $ npm i jotai
 ```
 
-Similarly, the composite clock would be all placed in `src/CompositeClock`. To match the 3 requried states, there would be 3 groups of atoms and state-changing hooks placed seperately in `TimeAtom.ts`, `AnalogueAtom.ts` and `DigitalAtom.ts`. An atom represents a state or a derived datum, and a state-changing hook returns a function of state-changing logics to atoms.
+Again, the composite clock would be all placed in `src/CompositeClock`. To match the 3 requried states, there would be 3 groups of atoms and state-changing hooks placed seperately in `TimeAtom.ts`, `AnalogueAtom.ts` and `DigitalAtom.ts`. In Jotai, an atom represents a state or a derived datum, and a state-changing hook is built by using state setting calls to an atom.
 
 And for view components, there are `AnalogueView.ts` for the analogue clock, `DigitalView.ts` for the digital clock, and `CompositeView.ts` as a glue. Besides, Jotai providers need to be initialized but doing it costs little.
 
@@ -1812,7 +1833,7 @@ export const DigitalView: FC<Props> = ({ className }) => {
 
 ```tsx
 // d6f8289/src/CompositeClock/CompositeView.tsx
-import { useAtomValue } from 'jotai';
+import { useAtomValue, useStore } from 'jotai';
 import { useHydrateAtoms } from 'jotai/utils';
 import { FC, useCallback, useEffect, useRef } from 'react';
 import { analogueAtom } from './AnalogueAtom';
@@ -1825,15 +1846,15 @@ import { timeAtom, useChangeTimestamp } from './TimeAtom';
 export const CompositeView: FC = () => {
   useHydrateAtoms([[timeAtom, { timestamp: Date.now() }] as const]);
 
+  const store = useStore();
   const { isEditMode: isEditModeInAnalogueClock } = useAtomValue(analogueAtom);
   const { isEditMode: isEditModeInDigitalClock } = useAtomValue(digitalAtom);
-  const { timestamp } = useAtomValue(timeAtom);
 
   const changeTimestamp = useChangeTimestamp();
 
   const calcTimestampCorrection = useCallback(() => {
-    return timestamp - Date.now();
-  }, [timestamp]);
+    return store.get(timeAtom).timestamp - Date.now();
+  }, [store]);
 
   const refTimeCorrection = useRef<number>(calcTimestampCorrection());
 
@@ -1896,8 +1917,8 @@ reportWebVitals();
 
 ```diff
 // d6f8289/src/CompositeClock/CompositeView.tsx
--import { useAtomValue } from 'jotai';
-+import { Provider, useAtomValue } from 'jotai';
+-import { useAtomValue, useStore } from 'jotai';
++import { Provider, useAtomValue, useStore } from 'jotai';
 
 ...
 
@@ -1934,13 +1955,13 @@ The example module built with Jotai is complete. Its codebase is hosted at [revi
 
 ## Review of state management with Jotai<a id="review_of_state_management_with_jotai"></a>
 
-In terms of state management, compared with MVC pattern, the brightest pro of Jotai is, although state-changing hooks make side effects of changing one or more states and invoke zero or more other state-changing hooks, the very last step of any state-changing logics is all made by the `set` calls that change only one state at a time and don't get any more state-changing logics invoked, so state-changing logics can be easily tracked, which makes states changing predictable at limited cost on scaling up the app. It can be perceived by checking how state-changing hooks `TimeAtom.ts`, `AnalogueAtom.ts` and `DigitalAtom.ts` work. This benefits maintainability.
+In Jotai, state-changing logics are defined by state-changing hooks. To understand what states a state-changing hook changes, what state setting calls the hook invokes needs to be tracked out by looking into function bodies of the hook and other hooks invoked by the hook. But, unlike tracking state-changing events in MVC pattern, the tracking work in Jotai state-changing hooks is as easy as tracking plain functions, which makes states changing in Jotai predictable at limited cost. It can be perceived by checking how state-changing hooks `TimeAtom.ts`, `AnalogueAtom.ts` and `DigitalAtom.ts` work. Predictable states changing at limited cost of tracking state-changing hooks makes up the brightest pro of Jotai.
 
-Meanwhile, another major pro of Jotai is, as Jotai providers can be nested easily, module-wide states can be hosted in the Jotai provider of its own easily while app-wide states are hosted in the Jotai provider of the app, which makes a module able to have multiple instances with independent states easily. In the example, the Jotai provider in `src/index.tsx` hosts the app-wide states and the Jotai provider in `src/CompositeClock/CompositeView.tsx` hosts the module-wide states. This benefits portability.
+Besides, as Jotai store providers can be nested easily, module-wide states can be hosted easily in the Jotai store provider of a module while app-wide states are hosted in the Jotai store provider of the app, which makes a module able to be initialized easily for multiple instances with independent states. In the example, the Jotai store provider in `src/CompositeClock/CompositeView.tsx` hosts the module-wide states and the Jotai store provider in `src/index.tsx` hosts the app-wide states. Nestability of Jotai store providers leads to another major pro of Jotai.
 
-For the cons of Jotai, I don't think there is noticeable one. It might look that, in the example, latest states can't be accessed in state-changing hooks immediately after states changing. But, it can be resolved by accessing the store from the nearest Jotai provider with the help of `useStore`.
+For cons of Jotai, I don't think there is a noticeable one. Perhaps, one con is, the brightest pro of Jotai is not strong enough.
 
-As a sum-up, doing state management with Jotai achieves predictable states changing with a bit cost of tracking state-changing logics. By the way, if comparing Jotai with Recoil, it's easy to find that Jotai is just like a tailored version of Recoil and they have similar usages and pros.
+To sum up, doing state management with Jotai achieves predictable states changing at limited cost of tracking state-changing logics. By the way, if comparing Jotai with Recoil, it's easy to find that Jotai atoms are pretty much like Recoil atoms or selectors, which makes Jotai pretty much like a lightweight verson of Recoil.
 
 ## Example module built with Valtio<a id="example_module_built_with_valtio"></a>
 
@@ -1977,13 +1998,13 @@ Then, to use Valtio, `valtio` is installed:
 $ npm i valtio
 ```
 
-The example module, the composite clock, would be all placed in `src/CompositeClock`, too. To match the 3 requried states, there would be 3 groups of proxies and state-changing methods placed seperately in `TimeState.ts`, `AnalogueState.ts` and `DigitalState.ts`. In addition, a proxy in Valtio hosts a state's values and derived data.
+The example module, the composite clock, would be all placed in `src/CompositeClock`, too. To match the 3 requried states, there would be 3 groups of state proxies, deriving proxies and state-changing functions placed seperately in `TimeState.ts`, `AnalogueState.ts` and `DigitalState.ts`. In Valtio, a state proxy in Valtio hosts a state as well as derived data from the state itself, and a deriving proxy hosts a derived datum from any states.
 
-And for view components, there are `AnalogueView.ts` for the analogue clock, `DigitalView.ts` for the digital clock, and `CompositeView.ts` as a glue. Besides, I would build helpers to set initial states on a view component initialization as needed.
+And for view components, there are `AnalogueView.ts` for the analogue clock, `DigitalView.ts` for the digital clock, and `CompositeView.ts` as a glue. Besides, some helper is built for initial states assigning.
 
-![Relation of parts in the composite clock built with Valtio](../assets/0642d698f875d469ad56db95c14d58dad91d9584.jpg)
+![Relation of parts in the composite clock built with Valtio](../assets/0651f8e57a78e34547839c08c8523e89d86188bd.jpg)
 
-The 3 groups of proxies and state-changing methods are coded as follows:
+The 3 groups of state proxies, deriving proxies and state-changing functions are coded as follows:
 
 ```ts
 // f8e6217/src/CompositeClock/TimeState.ts
@@ -2459,19 +2480,21 @@ export default App;
 
 The example module built with Valtio is complete. Its codebase is hosted at [review-of-state-management-in-react/04-kinds-of-lightweight-trials-mobx-zustand-jotai-and-valtio/f8e6217](https://github.com/licg9999/review-of-state-management-in-react/tree/master/04-kinds-of-lightweight-trials-mobx-zustand-jotai-and-valtio/f8e6217).
 
-## Review of state management with Valtio<a id="example_module_built_with_valtio"></a>
+## Review of state management with Valtio<a id="review_of_state_management_with_valtio"></a>
 
-In terms of state management, compared with MVC pattern, the brightest pro of Valtio is, although state-changing methods invoke other state-changing methods and trigger side effects of states changing, derived data changing as well as views rerendering, the side effects don't get any more state-changing logics invoked so the state-changing logics can be easily tracked, which makes states changing predictable at limited cost on scaling up the app. It can be perceived by checking how `TimeState.ts`, `AnalogueState.ts` and `DigitalState.ts` work. This benefits maintainability.
+In Valtio, state-changing logics are defined by state-changing functions. To understand what states a state-changing function changes, what state proxies the function changes needs to be tracked out by looking into function bodies of the function and other functions invoked by the function. But, unlike tracking state-changing events in MVC pattern, the tracking work in Valtio state-changing functions is as easy as tracking plain functions, which makes states changing in Valtio predictable at limited cost. It can be perceived by checking how `TimeState.ts`, `AnalogueState.ts` and `DigitalState.ts` work. Predictable states changing at limited cost of tracking state-changing hooks makes up the brightest pro of Valtio.
 
-But meanwhile, the biggest con of Valtio is, a module built with Valtio is actually not completely modularized by default, because when a module gets instantiated multiple times, these instances are sharing exactly the same app-wide states in fact. To resolve the modularity issue, proxies need to hosted in React contexts and state-changing methods need to be returned from hooks. But this brings extra cost.
+But, on the other hand, a module built with Valtio is actually not completely modularized by default, because when a module gets initialized for multiple instances, these instances are sharing exactly the same app-wide states. To resolve this issue, state proxies need to be hosted in React contexts and state-changing functions need to be returned from hooks, which is costly in Valtio. Incomplete modularization by default leads to the biggest con of Valtio.
 
-To sum up, doing state management with MobX achieves predictable states changing with a bit cost of tracking state-changing logics and taking care of the modularity issue. Also, if comparing Valtio with MobX, it's not difficult to find that Valtio is like a simplified version of MobX and they have similar usages and pros.
+Besides, a minor con of Valtio is, no strong support is provided for initial states assigning, so extra cost of development is needed.
 
-## Summary<a id="summary"></a>
+To sum up, doing state management with Valtio achieves predictable states changing at limited cost of tracking state-changing logics as well as at extra cost of resolving incomplete modularization. Also, if comparing Valtio with MobX, it's easy to find that Valtio state proxies and state-changing functions are pretty much like MobX stores, which makes Valtio pretty much like a lightweight verson of MobX.
 
-After reviewing the 4 lightweight trials of state management, MobX, Zustand, Jotai and Valtio, I think the most insightful finding can be, they actually work no worse than reducer-like solutions and with no less cost of development. Because state-changing logics can be either easily tracked or clearly defined, they all achieve predictable states changing. Because different preferences on state management are taken, they result in extra cost of development on different aspects. Because reading, writing, read-write, write-read state-changing logics can be all fulfilled, they have no inability in state management.
+## Summary for lightweight trials<a id="summary_for_lightweight_trials"></a>
 
-Besides, another interesting insight is, Zustand is designed like a lightweight version of RTK, Jotai is designed like a lightweight version of Recoil, Valtio is designed like a lightweight version of MobX. I mention this because noticing this might help user devs have a more comprehensive understanding on these libraries, but it's hard to tell whether the authors designed them in these ways on purpose or by accident.
+After reviewing the 4 lightweight trials of state management, MobX, Zustand, Jotai and Valtio, the most insightful finding can be, they actually work no worse than reducer-like solutions and at no less cost of development. Because what states state-changing logics change can all be known at limited cost, they all achieve predictable states changing at limited cost. But, because of their different preferences, they result in extra cost of development on differently. In addition, because latest states can be accessed immediately after some states are changed, they have no inability in any kind of state-changing logics.
+
+Then, another interesting insight is, Zustand is designed like a lightweight version of RTK, Jotai is designed like a lightweight version of Recoil, Valtio is designed like a lightweight version of MobX. I mention this because noticing this might help user devs have a more comprehensive understanding on these libraries, but I can't tell whether the authors designed them in these ways on purpose or by accident.
 
 ## What's next<a id="what_s_next"></a>
 

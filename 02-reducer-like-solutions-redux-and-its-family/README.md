@@ -16,7 +16,7 @@ As mentioned previously, with [the example of the composite clock built with MVC
 - [Review of state management with Flux](#review_of_state_management_with_flux)
 - [Example module built with `useReducer`](#example_module_built_with_usereducer)
 - [Review of state management with `useReducer`](#review_of_state_management_with_usereducer)
-- [Summary](#summary)
+- [Summary for reducer-like solutions](#summary_for_reducer_like_solutions)
 - [What's next](#what_s_next)
 
 ## Reduce function<a id="reduce_function"></a>
@@ -27,7 +27,7 @@ Reduce function was [formally introduced](https://scholar.google.com/scholar?q=W
 type Reducer<TResult, TValue> = (result: TResult, value: TValue) => TResult;
 ```
 
-By reducer-like solutions of state management, I mean those libraries that do states changing in state management by using reducers or some similar ways. Reducers of them treat states as results and actions of user interactions as values, so actions can be processed in sequence to return the next state from the previous state:
+By reducer-like solutions of state management, I mean those libraries that do states changing in state management by using reducers or some similar ways. Reducers of them treat states as results and action payloads of user interactions as values, so action payloads can be processed in sequence to return the next state from the previous state:
 
 ```ts
 type Reducer<TState, TAction> = (state: TState, action: TAction) => TState;
@@ -1012,21 +1012,17 @@ Then, the example module built with Redux is complete. It can be previewed with 
 
 ## Review of state management with Redux<a id="review_of_state_management_with_redux"></a>
 
-In terms of state management, compared with MVC pattern, the brightest pro of Redux is, available state-changing logics on each state are clearly defined in each reducer, actions don't do anything more than invoking defined state-changing logics in reducers, reducers process old states and actions for new states as pure functions without any side effect like events emitting in models, and there is no chance for state-changing logics in a reducer to get more state-changing logics somewhere else invoked regardless of how actions are dispatched to it, so states changing becomes predictable despite the scale of the app. It can be perceived by checking how `TimeReducer.ts`, `AnalogueReducer.ts` and `DigitalReducer.ts` work with their actions. This benefits maintainability.
+In Redux, one-state changing logics are defined by reducers. Because each reducer is a pure function that processes one state to return a new state of the one without any side effects, what one state a reducer changes can be clearly understood by only reading the reducer's function declaration, which makes one-state changing in Redux predictable at no cost of tracking any state-changing logics. Meanwhile, multi-state changing logics are defined by multi-state changing actions. Though, to understand what states a multi-state changing action changes, what reducers the action involves needs to be tracked out by looking into function bodies of the action and other actions invoked by the action. But, unlike tracking state-changing events in MVC pattern, the tracking work in Redux actions is as easy as tracking plain constants and plain functions, which makes multi-state changing in Redux predictable at limited cost. It can be perceived by checking how `TimeReducer.ts`, `AnalogueReducer.ts` and `DigitalReducer.ts` and their actions work. Predictable one-state changing at no cost of tracking any state-changing logics and predictable multi-state changing at limited cost of tracking reducers and actions make up the brightest pro of Redux.
 
-![Benefit of Redux](../assets/a344100d0e0a3440306b9551ca0431eb187f975a.jpg)
+But, on the other hand, because building and maintaining a reducer always involve building and maintaining its actions and vise versa, a reducer and its actions are high-coupling, which brings difficulties in development, thus overall cost of development becomes high. Especially, when some actions of a reducer are dependent on the Redux setup for accessing the root store, the reducer, its actions and the Redux setup constitute circular dependency, so they need to be coded iteratively, thus the cost becomes even higher. High coupling between reducers and their actions leads to the biggest con of Redux.
 
-But on the other hand, the biggest con of Redux is, as getting one state managed requires a reducer, its actions, its selectors and the Redux setup coded simultaneously and a reducer and its actions are high-coupling, cost of development is high. (When some parts are high-coupling, building or maintaining one of them always involves building or maintaining the rest parts, which brings difficulties in development.) Especially, when reducers, their actions and the Redux setup constitue circular dependency and they have to be coded iteratively, the cost can be even higher, which can be seen in the steps of coding states of the analogue clock and the digital clock.
+Besides, a module built with Redux is actually not completely modularized by default, because when a module gets initialized for multiple instances, these instances are sharing exactly the same states in the app-wide Redux setup. To resolve this issue, a module-wide Redux setup needs to be introduced per module, which is costly in Redux. Incomplete modularization by default is another major con of Redux.
 
-Besides, another major con of Redux is, a module built with Redux is actually not completely modularized by default, because when a module gets instantiated multiple times, these instances are sharing exactly the same state in the the app-wide Redux setup in fact. To resolve the modularity issue, a module-wide Redux setup needs to be introduced per module. But this brings extra cost.
-
-![Harm of Redux](../assets/dbf896fd4f2bfa1136a1094d244b2ceb9df9582c.jpg)
-
-To sum up, doing state management with Redux achieves predictable states changing despite the scale of the app but with quite high cost of development.
+To sum up, doing state management with Redux achieves predictable states changing at limited cost of only tracking multi-state changing logics but at quite high overall cost of development.
 
 ## Example module built with Redux Toolkit<a id="example_module_built_with_redux_toolkit"></a>
 
-Now that using Redux is costly, let me check out its next-generation solution, Redux Toolkit(RTK), whose goal is to decrease the cost. As the view components in every example module built with a reducer-like solution would all be similarly coded and relate little to state managemenet, I would not list them in the following sections but they can still be found in the hosted codebase.
+Now that using Redux is costly, let me check out its next-generation solution, Redux Toolkit(RTK), whose goal is to decrease cost of development. As the view components in every example module built with a reducer-like solution would all be similarly coded and relate little to state management, I would not list them in the following sections but they can still be found in the hosted codebase.
 
 Again, `create-react-app` is used to initialize the React app with the option `--template typescript`:
 
@@ -1063,11 +1059,11 @@ Then, to use RTK, `@reduxjs/toolkit` and `react-redux` are installed:
 $ npm i @reduxjs/toolkit react-redux
 ```
 
-RTK is a set of helpers simplifying logics in Redux to different levels. I would use the helpers that simplify the logics most to decrease the cost, so `createSlice` is used to simplify reducers and actions, and `configureStore` is used for the Redux setup. By a slice, it's an easily definable combination of a reducer with its basic actions. And for advanced actions that access the root store and dispatch other actions, they can be coded by using [thunks](https://github.com/reduxjs/redux-thunk) and placed together with slices.
+RTK is a set of helpers simplifying logics in Redux to different levels. I would use the helpers that simplify the logics most to decrease the cost, so `createSlice` is used to simplify reducers and actions, and `configureStore` is used for the Redux setup. By a slice, it's an easily definable combination of a reducer with its one-state changing actions. And for advanced actions that access the root store and/or dispatch other actions, they can be coded following the usage of [thunks](https://github.com/reduxjs/redux-thunk) and placed together with slices.
 
-In terms of coding, slices are almost independent, advanced actions are dependent on the Redux setup for accessing the root store, the Redux setup is dependent on slices for building the root store. So, I would start from slices and evolve the rest parts afterwards.
+In terms of coding, slices are self-contained, advanced actions are dependent on the Redux setup for accessing the root store, the Redux setup is dependent on slices for building the root store. So, I would start from slices and evolve the rest parts afterwards.
 
-The slices are coded as follows. Thinking of the needed advanced actions, the basic actions whose function names starting with `_` are prepared ahead:
+The slices are coded as follows. Thinking of the advanced actions to be coded later, some one-state changing actions whose function names starting with `_` are prepared ahead:
 
 ```ts
 // d1b2fad/src/CompositeClock/TimeSlice.ts
@@ -1281,7 +1277,7 @@ root.render(
 reportWebVitals();
 ```
 
-And, the advanced actions and the selectors are coded as follows. The advanced actions would use the previously prepared basic actions whose function names start with `_`:
+And, the advanced actions and the selectors are coded as follows. The advanced actions would use the previously prepared one-state changing actions whose function names start with `_`:
 
 ```diff
 // d1b2fad/src/CompositeClock/AnalogueSlice.ts
@@ -1374,15 +1370,17 @@ For the view components, along with the app, they can be found at [review-of-sta
 
 ## Review of state management with Redux Toolkit<a id="review_of_state_management_with_redux_toolkit"></a>
 
-Compared with Redux, in RTK, getting one state managed requires a slice, its advanced actions, its selectors and the Redux setup coded in turn and they don't constitue circular dependency, so the cost of development is decreased.
+In RTK, one-state changing logics are defined by slice functions. As a slice function is restricted to changing the one state represented by the slice, what one state a slice function changes can be clearly understood by only checking what one state the slice represents, which makes one-state changing in Redux predictable at no cost of tracking any state-changing logics. And, multi-state changing logics are defined by multi-state changing actions. Likewise, to understand what states a multi-state changing action changes, what slice functions the action invokes needs to be tracked out by looking into function bodies of the action and other actions invoked by the action. But, the tracking work is as easy as tracking plain functions, which makes multi-state changing in RTK predictable at limited cost. So, RKT has the same brightest pro as Redux does.
 
-But, as a slice and its advanced actions are still high-coupling, the cost is still a bit high. Besides, the modularity issue is not resolved, which means getting different instances of a module having independent states still needs an extra module-wide Redux setup that is costly.
+Meanwhile, because one-state changing actions in RTK are exported directly from slices, high coupling between reducer and their one-state changing actions in Redux gets eliminated is RTK. Though, because building and maintaining multi-state changing actions always involve building and maintaining underlying one-state changing actions exported from slices, multi-state changing actions and their underlying slices become high-coupling, which brings difficulties in development, thus overall cost of development becomes high. High coupling between slices and their multi-state changing actions leads to the biggest con of Redux.
 
-To sum up, doing state management with RTK receives the same benefits as with Redux at lower cost of development but the cost is still a bit high.
+Again, a module built with RTK is still not completely modularized by default and introducing a module-wide Redux setup is still costly in RTK. So, incomplete modularization by default is still another major con of RTK.
+
+To sum up, doing state management with RTK achieves predictable states changing at limited cost of only tracking multi-state changing logics but at a bit high overall cost of development.
 
 ## Example module built with Flux<a id="example_module_built_with_flux"></a>
 
-RTK has done a lot to decrease cost of development but using it is still costly. The 2 cons, high coupling between reducers and their actions and the modularity issue that a module can't have multiple instances with independent states, seem to be intrinsic characters of reducer-like solutions. To figure out how these cons come into being, I would take a look at Redux's parent solution, Flux.
+RTK has done a lot to decrease cost of development but using it is still costly. The 2 cons, high coupling between reducers/slices and their actions and incomplete modularization by default, seem to be intrinsic characters of reducer-like solutions. To figure out how these cons come into being, I would take a look at Redux's parent solution, Flux.
 
 Again, the React app is initialized with `create-react-app --template typescript`, `src/App.tsx` is cleared for later use, unused files are removed, the package of time helpers is installed:
 
@@ -2021,15 +2019,15 @@ export const CompositeView = createFunctional<Props, ClockState>(
 
 ## Review of state management with Flux<a id="review_of_state_management_with_flux"></a>
 
-Compared with Redux, in Flux, getting one state managed is almost the same except that a store in Flux is equivalent of a reducer and its selectors in Redux, which is a store in Flux does both states changing and data deriving. But, stores and their actions are kept high-coupling and sometimes constitue circular dependency, and the modularity issue that a module can't have multiple instances with independent states exists unless extra cost is paid to avoid singletons of stores and the dispatcher. As [Redux is evolved from Flux](https://www.youtube.com/watch?v=xsSnOQynTHs) and they have the same 2 cons, does that mean the 2 cons are intrinsic characters of reducer-like solutions? With this question, let me take a look a bit closely.
+In terms of state management, the only difference between Flux and Redux is, Flux uses stores with reducers included for both one-state changing and data deriving, but Redux uses reducers for one-state changing and selectors for data deriving seperately. The 2 cons of high coupling between reducers and their actions as well as incomplete modularization by default exist in both Flux and Redux, which is very possibly because [Redux is evolved from Flux](https://www.youtube.com/watch?v=xsSnOQynTHs). But does that mean the 2 cons are intrinsic characters of reducer-like solutions? With this question, let me take a look a bit closely.
 
-About high coupling, is a reducer necessarily high-coupling with its actions? What if a reducer processing multiple kinds of actions can be split into multiple reducers processing only one kind of actions? Then, action functions become no longer needed and high coupling disappears. A potential challenge may be how to get multiple states changed with a reducer handling only one kind of actions, but I don't think it's not resolveable. This assumption indicates, only when a reducer-like solution treats a reducer as a binary operator that processes more than one kind of actions, the reducer would be high-coupling with its actions. As all Redux faimly members are designed in this way but some other ways are still possible, high coupling is only an intrinsic character of Redux family but not that of reducer-like solutions.
+About high coupling, is a reducer necessarily high-coupling with its actions? What if a reducer processing multiple kinds of actions can be split into multiple reducers processing only one kind of actions? Then, plain payloads of reducers would take the place of actions, so high coupling disappears. A potential challenge can be how to get multi-state changing logics defined by a reducer that handles only one kind of actions, but I don't think it's unresolveable. This assumption indicates, only when a reducer-like solution treats a reducer as a binary operator that processes more than one kind of actions, the reducer would be high-coupling with its actions. As all Redux faimly members are designed in this way but some other ways of designing reducer-like solutions are still possible, high coupling is only an intrinsic character of Redux family but not that of reducer-like solutions.
 
-About the modularity issue, are states necessarily organized as app-wide ones by default? What if states are organized as module-wide ones by default or there is support to organize states as module-wide ones at low cost? Then, the modularity issue is gone. This assumption indicates, only when a reducer-like solution organizes states as app-wide ones by default and doesn't provide support or module-wide ones, the modularity issue comes. As all Flux-like solutions are designed in this way but some Redux family member like `useReducer` are not, the modularity issue is only an intrinsic character of Flux-like solutions but not that of either Redux family or reducer-like solutions.
+About incomplete modularization, are states necessarily organized as app-wide ones by default? What if states are organized as module-wide ones by default or there is support to organize states as module-wide ones at low cost? Then, modularization becomes complete. This assumption indicates, only when a reducer-like solution organizes states as app-wide ones by default and doesn't provide good support or module-wide ones, incomplete modularization prones to happen. As some Redux family member like `useReducer` is not designed in this way, incomplete modularization is not intrinsic character of either Redux family or reducer-like solutions.
 
 ## Example module built with `useReducer`<a id="example_module_built_with_usereducer"></a>
 
-Next, to continue getting a full picture of Redux family, let me check out the React's built-in hook `useReducer`. Because `useReducer` is evolved from both Flux and Redux but was born after Redux, I would like to regard it as Redux's nephew.
+Next, to continue getting a comprehensive understanding of Redux family, let me check out the React's built-in hook `useReducer`. Because `useReducer` is evolved from both Flux and Redux but was born after Redux, I would like to regard it as Redux's nephew.
 
 Again, the React app is initialized with `create-react-app --template typescript`, `src/App.tsx` is cleared for later use, unused files are removed, the package of time helpers is installed:
 
@@ -2058,7 +2056,7 @@ $ rm src/App.css src/App.test.tsx src/logo.svg
 $ npm i date-fns
 ```
 
-The hook `useReducer` is only able to manage component-wide states by default. To get component-wide states managed as module-wide ones, the following helper `contextualizeUseReducer` is introduced:
+The hook `useReducer` only manages component-wide states by its original design. To get component-wide states hoisted as module-wide ones, the following helper `contextualizeUseReducer` is introduced:
 
 ```ts
 // e6ed1b5/src/reducerHelpers.tsx
@@ -2138,7 +2136,7 @@ export function contextualizeUseReducer<TState, TAction>(
 
 Additionally, when some `useCallback` wrapped function in a view component needs to access a state, it can use the state getter instead of the state directly to avoid getting itself regenerated on rerendered so to avoid performance issues to some degree. Though, a small problem of the state getter is, it can't access the latest state value immediately after an action is dispatched because the state accessed by the getter only gets refreshed on rerendered.
 
-The general idea of the implementation with `useReducer` is almost the same as that with Redux except that there is no app-wide setup like the Redux setup.
+The general thought of the implementation with `useReducer` is almost the same as that with Redux except that an app-wide setup is not needed.
 
 The reducer with its actions for the state of time is coded as follows:
 
@@ -2519,15 +2517,15 @@ export const CompositeClock: FC = () => {
 
 ## Review of state management with `useReducer`<a id="review_of_state_management_with_usereducer"></a>
 
-Compared with Redux, in `useReducer`, getting one state managed is almost the same except that there is no app-wide setup like the Redux setup so I need to build my own helper to get component-wide states managed as module-wide ones, and latest state values can't be accessed immediately after an action is dispatched so the write-read state-changing logics can't be programmed. Reducers and their actions are high-coupling and sometimes constitue circular dependency, which results in high cost of development. The modularity issue that a module can't have multiple instances with independent states is gone but building and using the helper of my own increases the cost.
+In terms of state management, the only differences between `useReducer` and Redux are, (1) `useReducer` only manages component-wide states by its original design, so building a helper to get component-wide states hoisted as module-wide ones is needed, (2) states in `useReducer` only get refreshed on rerendered, so latest states can't be accessed immediately after an action payload is dispatched, thus write-read state-changing logics can't be coded. Hence, `useReducer` has the same pros as Redux does but has cons of high coupling between reducers and actions and inability of write-read state-changing logics.
 
-To sum up, doing state management with `useReducer` receives the same benefits and the harms as with Redux but with inability of write-read state-changing logics.
+To sum up, doing state management with `useReducer` achieves predictable states changing at limited cost of only tracking multi-state changing logics but at high overall cost of development and with inability of write-read state-changing logics.
 
-## Summary<a id="summary"></a>
+## Summary for reducer-like solutions<a id="summary_for_reducer_like_solutions"></a>
 
-After getting the example module, the composite clock, rebuilt with the 4 Redux family members, Redux, RTK, Flux and `useReducer`, it can be concluded that Redux family achieves predictable states changing despite the scale of the app but with high cost of development. Because of reducers processing old states and actions for new states with no side effect, states changing becomes predictable. Because of high coupling between reducers/stores and their actions and the modularity issue that a module can't have multiple instances with independent states, cost of development is high.
+After getting the example module, the composite clock, rebuilt with the 4 Redux family members, Redux, RTK, Flux and `useReducer`, it can be concluded that Redux family achieves predictable states changing at limited cost of only tracking multi-state changing logics but at high overall cost of development. Because one-state changing logics are defined by reducers or slice functions and what one state a reducer or a slice function changes can be clearly understood by only taking a look at the reducer's function declaration or what one state the slice represents, one-state changing in Redux family becomes predictable at no cost of tracking any state-changing logics. Because multi-state changing logics are defined by multi-state changing actions and looking into function bodies of a multi-state changing action and other actions invoked by the action to track out what reducers or slices it involves or invoke is as easy as tracking plain constants and plain functions, multi-state changing in Redux family becomes predictable at limited cost. Though, because of high coupling between reducers/slices and actions, overall cost of development is high.
 
-Though, an worth-mentioning insight is, the 2 cons of Redux family are not intrinsic characters of reducer-like solutions because a reducer doesn't have to process more than one kind of actions and states don't have to be organized as app-wide ones. Although it's still undeniable that Redux family goes much further compared with MVC pattern, it's also completely possible that a better reducer-like solution can be designed.
+In addition, an worth-mentioning insight is, the con of high coupling between reducers and actions as well as the con of incomplete modularization by default are not intrinsic characters of reducer-like solutions, because a reducer doesn't have to process more than one kind of actions, and states don't have to be organized as app-wide ones by default. Although it's still undeniable that Redux family goes much further in state management than MVC pattern, it's also possible to design a lower-cost reducer-like solution.
 
 ## What's next<a id="what_s_next"></a>
 
