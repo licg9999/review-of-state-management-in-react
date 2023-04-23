@@ -61,7 +61,7 @@ _Valtio:_
 - _Cons:_ (1) Incomplete modularization by default. (2) No strong support is provided for initial states assigning.
 - _Sum-up:_ Predictable states changing at limited cost of tracking state-changing logics as well as at extra cost of resolving incomplete modularization.
 
-Some details referenced later might not be listed here but you can always can them in the previous articles.
+Some details referenced later might not be listed here but you can always find them in the previous articles.
 
 In terms of the pros of the widely-accepted libraries, they all achieve predictable states changing at limited cost of tracking state-changing logics to some extent. (1) Libraries like Redux family and Zustand achieve predictable states changing at limited cost of only tracking multi-state changing logics. In libraries of this kind, a one-state changing procedure is defined in a way of getting what one state it changes to be understood clearly by only checking its declarative information. A multi-state changing procedure is defined by involving one-state changing procedures arbitrarily. (2) Libraries like Recoil and MobX achieve predictable states changing at limited cost of tracking both one-state changing logics and multi-state changing logics. In libraries of this kind, a state-changing procedure is defined by invoking state-changing calls to one or more states arbitrarily.
 
