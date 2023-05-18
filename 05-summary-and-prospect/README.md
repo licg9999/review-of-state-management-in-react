@@ -27,37 +27,37 @@ _MVC pattern:_
 
 _Redux family:_
 
-- _Pros:_ Predictable one-state changing at no cost of tracking any state-changing logics and predictable multi-state changing at limited cost of tracking reducers/slices and actions.
-- _Cons:_ (1) High coupling between reducers and their actions. (2) Incomplete modularization by default.
+- _Pros:_ Predictable one-state changing without tracking logics in any function bodies and predictable multi-state changing at limited cost of tracking involved reducers/slices in function bodies of actions.
+- _Cons:_ (1) High coupling between reducers/slices and their actions. (2) Incomplete modularization by default.
 - _Sum-up_: Predictable states changing at limited cost of only tracking multi-state changing logics but at high overall cost of development.
 
 _Recoil:_
 
-- _Pros:_ (1) Predictable states changing at limited cost of tracking state-changing hooks. (2) Nestability of Recoil roots.
+- _Pros:_ (1) Predictable states changing at limited cost of tracking invoked set calls in function bodies of state-changing hooks. (2) Nestability of Recoil roots.
 - _Cons:_ (1) Handling asynchronousness burdens. (2) Naming unique keys for states.
 - _Sum-up:_ Predictable states changing at limited cost of tracking state-changing logics as well as at extra cost of handling asynchronousness burdens and naming unique keys for states.
 
 _MobX:_
 
-- _Pros:_ (1) Predictable states changing at limited cost of tracking store methods. (2) The app domain being clearing split.
+- _Pros:_ (1) Predictable states changing at limited cost of tracking changed store properties in function bodies of store methods. (2) The app domain being clearing split.
 - _Cons:_ A strong understanding of MobX's subscription mechanism needed.
 - _Sum-up:_ Predictable states changing at limited cost of tracking state-changing logics as well as at extra cost of correctly using the subscription mechanism.
 
 _Zustand:_
 
-- _Pros:_ Predictable one-state changing at no cost of tracking any state-changing logics and predictable multi-state changing at limited cost of tracking store functions and multi-state changing hooks.
+- _Pros:_ Predictable one-state changing without tracking logics in any function bodies and predictable multi-state changing at limited cost of tracking invoked store functions in function bodies of multi-state changing hooks and multi-state changing hooks.
 - _Cons:_ (1) High coupling between stores and their multi-state changing hooks. (2) Incomplete modularization by default. (3) No strong support is provided for data deriving and initial states assigning.
 - _Sum-up:_ Predictable states changing at limited cost of only tracking multi-state changing logics but at a bit high overall cost of development.
 
 _Jotai:_
 
-- _Pros:_ (1) Predictable states changing at limited cost of tracking state-changing hooks. (2) Nestability of Jotai store providers.
+- _Pros:_ (1) Predictable states changing at limited cost of tracking invoked set calls in function bodies of state-changing hooks. (2) Nestability of Jotai store providers.
 - _Cons:_ Not much.
 - _Sum-up:_ Predictable states changing at limited cost of tracking state-changing logics.
 
 _Valtio:_
 
-- _Pros:_ Predictable states changing at limited cost of tracking state-changing hooks.
+- _Pros:_ Predictable states changing at limited cost of tracking changed state proxies in function bodies of state-changing hooks.
 - _Cons:_ (1) Incomplete modularization by default. (2) No strong support is provided for initial states assigning.
 - _Sum-up:_ Predictable states changing at limited cost of tracking state-changing logics as well as at extra cost of resolving incomplete modularization.
 
@@ -75,7 +75,7 @@ The by-preference cons bring more inconvenience than convenience in state manage
 
 Next, let me get into the question #2, _What does a better library of state management in React look like?_. Today, some libraries achieve predictable states changing at limited cost of only tracking multi-state changing logics but at high overall cost of development, other libraries achieve predictable states changing at limited cost of tracking both one-state changing logics and multi-state changing logics but can end up with acceptable overall cost. So, what if here comes a new library that achieves predictable states changing without tracking either one-state changing logics or multi-state changing logics? Then, that will be the better library that achieve more predictable state changing than ever. And, the question becomes, how to design a new library of that kind?
 
-Thinking of Redux, one-state changing logics are defined by reducers. Because each reducer is a pure function that processes one state to return a new state of the one without any side effects, what one state a reducer changes can be clearly understood by only reading the reducer's function declaration, which makes one-state changing in Redux predictable at no cost of tracking any state-changing logics. So, what if, in the new library, both one-state changing logics and multi-state changing logics can be defined by reducers? Then, both one-state changing and multi-state changing become predictable at no cost of tracking any state-changing logics. Also, as multi-state changing logics don't have to depend on one-state changing logics any more, high coupling between one-state changing and multi-state changing in Redux gets eliminated, which lowers overall cost of development. Reducers of that kind can be depicted as follows:
+Thinking of Redux, one-state changing logics are defined by reducers. Because each reducer is a pure function that processes one state to return a new state of the one without any side effects, what one state a reducer changes can be clearly understood by only reading the reducer's function declaration, which makes one-state changing in Redux predictable without tracking logics in any function bodies. So, what if, in the new library, both one-state changing logics and multi-state changing logics can be defined by reducers? Then, both one-state changing and multi-state changing become predictable without tracking logics in any function bodies. Also, as multi-state changing logics don't have to depend on one-state changing logics any more, high coupling between one-state changing and multi-state changing in Redux gets eliminated, which lowers overall cost of development. Reducers of that kind can be depicted as follows:
 
 ```ts
 type Reducer<TStates, TPayloads extends []> = (
@@ -827,11 +827,11 @@ export default App;
 
 The example module built with MyLib is complete. It can be previewed with the command `npm start` and its codebase is hosted at [review-of-state-management-in-react/05-summary-and-prospect](https://github.com/licg9999/review-of-state-management-in-react/tree/master/05-summary-and-prospect).
 
-In MyLib, both one-state changing logics and multi-state changing logics are defined by reducers. Because each reducer is a pure function that processes one or multi state to return new states of the one or the multi without any side effects, what states a reducer changes can be clearly understood by only reading the reducer's function declaration, which makes both one-state changing and multi-state changing in MyLib predictable at no cost of tracking any state-changing logics. Predictable states changing without tracking any function bodies makes up the brightest pro of MyLib.
+In MyLib, both one-state changing logics and multi-state changing logics are defined by reducers. Because each reducer is a pure function that processes one or multi state to return new states of the one or the multi without any side effects, what states a reducer changes can be clearly understood by only reading the reducer's function declaration, which makes both one-state changing and multi-state changing in MyLib predictable without tracking logics in any function bodies. Predictable states changing without tracking logics in any function bodies makes up the brightest pro of MyLib.
 
 Meanwhile, as multi-state changing logics don't have to depend on one-state changing logics, there is no more high coupling between one-state changing and multi-state changing. Also, as all the previously found by-preference cons are resolved by design, no extra cost of development is taken. So, there is no noticeable con.
 
-As a sum-up, doing state management with MyLib achieves predictable states changing without tracking any state-changing logics and at low overall cost of development. In this way, a better library of state management in React can be designed.
+As a sum-up, doing state management with MyLib achieves predictable states changing without tracking logics in any function bodies and at low overall cost of development. In this way, a better library of state management in React can be designed.
 
 ## Postscript<a id="postscript"></a>
 
